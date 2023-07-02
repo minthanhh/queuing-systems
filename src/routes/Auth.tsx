@@ -1,27 +1,22 @@
-import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
-
-import { Heroes, LogoAlta, Warning } from '../assets';
-import { Button, Hero, Input } from '../components';
-
+import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+
+import { Button, Hero, Input, Logo } from '../components';
+import { Warning } from '../assets';
+
 import { auth } from '../configs/firebase.config';
-import { useAppDispatch, useAppSelector } from '../hooks/storeHooks';
-import { login } from '../redux/features/userSlice';
-import Logo from '../components/Logo/Logo';
+import { useAppDispatch } from '../hooks/storeHooks';
+import { login } from '../redux/slices/userSlice';
 
 const Auth = () => {
-   // const currentUser = useAppSelector((state) => state.user);
    const [isLoading, setIsLoading] = useState(false);
    const navigate = useNavigate();
    const dispatch = useAppDispatch();
 
    const {
-      reset,
-      watch,
       register,
-      setValue,
       handleSubmit,
       formState: { errors },
    } = useForm<FieldValues>({

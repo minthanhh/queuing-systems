@@ -15,7 +15,8 @@ module.exports = {
         textGray: '#7E7D88'
       },
       borderColor: {
-        borderGray: '#D4D4D7'
+        borderGray: '#D4D4D7',
+        primaryBorder: '#FF7506'
       }
     },
   },

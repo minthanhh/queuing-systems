@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import { addDoc, collection, getCountFromServer, query, where } from "firebase/firestore"
+import { collection, getCountFromServer, query, where } from "firebase/firestore"
 import { db } from "../../configs/firebase.config"
-import { DeviceType } from "../../types"
 
 interface CountState {
         device: {
@@ -49,7 +48,6 @@ const totalCounts = async (nameCollection: string) => {
     const collActive = collection(db, nameCollection)
     const qActive = query(collActive, where('status', '==', 'active'))
     const snActive = await getCountFromServer(qActive)
-    console.log(snActive)
     data.totalActive = snActive.data().count
 
 

@@ -5,7 +5,7 @@ import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
 import { useAppDispatch } from '../../../hooks/storeHooks';
 import { Button, Heading, Input } from '../../../components';
 import { DeviceType } from '../../../types';
-import { addDevice } from '../../../redux/features/deviceSlice';
+import { createDevice } from '../../../redux/slices/deviceSlice';
 
 const AddDevice = () => {
    const dispatch = useAppDispatch();
@@ -37,11 +37,9 @@ const AddDevice = () => {
    };
 
    const onSubmit: SubmitHandler<FieldValues> = (data) => {
-      dispatch(addDevice(data as DeviceType));
+      dispatch(createDevice(data as DeviceType));
       reset();
    };
-
-   console.log(errors);
 
    return (
       <div className="flex w-full">

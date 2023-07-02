@@ -18,7 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
                {routes.map(({ label, icon, path, more, children }, index) =>
                   path ? (
                      <NavLink
-                        key={index}
+                        key={label + index}
                         className={({ isActive }) =>
                            isActive ? onActive : noActive
                         }
@@ -38,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
                                  <ul>
                                     {children.map(({ label, path }, index) => (
                                        <NavLink
-                                          key={index}
+                                          key={path + index}
                                           className="transition-all ease-linear duration-200 px-4 hover:bg-[#FFF2E7] hover:text-primaryColor"
                                           to={path}
                                        >
@@ -53,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
                   ) : (
                      <>
                         <div
-                           key={index}
+                           key={label + index}
                            className="group px-3 relative text-textGray hover:bg-[#FFF2E7] hover:cursor-pointer select-none"
                         >
                            <span className="group-hover:text-primaryColor flex items-center gap-2 py-3 font-semibold text-base leading-6">
@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
                                        {children.map(
                                           ({ label, path }, index) => (
                                              <NavLink
-                                                key={index}
+                                                key={index + label + path}
                                                 className={({ isActive }) =>
                                                    isActive
                                                       ? onActive

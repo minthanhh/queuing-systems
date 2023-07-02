@@ -1,5 +1,3 @@
-import { BreadcrumbType } from '../../types';
-
 interface BreadcrumbProps {
    breadcrumb: string;
    path: string;
@@ -9,11 +7,7 @@ interface BreadcrumbProps {
    }[];
 }
 
-const Breadcrumb: React.FC<BreadcrumbProps> = ({
-   breadcrumb,
-   path,
-   labels,
-}) => {
+const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb }) => {
    return (
       <>
          {}

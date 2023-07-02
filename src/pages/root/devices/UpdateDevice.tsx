@@ -1,157 +1,74 @@
-import Select from 'react-select';
-import { Button, Heading, Input } from '../../../components';
-import { Link, useParams } from 'react-router-dom';
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../hooks/storeHooks';
-import { RootState } from '../../../redux/store';
+import { useParams } from 'react-router-dom';
+import { useForm, FieldValues } from 'react-hook-form';
 import { DeviceType } from '../../../types';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../configs/firebase.config';
+import { Heading, Input } from '../../../components';
 
 const UpdateDevice = () => {
-   const [device, setDevice] = useState<DeviceType | null>(null);
-   const { devices } = useAppSelector((state: RootState) => state.device);
    const { id } = useParams();
+   const [device, setDevice] = useState<DeviceType>();
 
    useEffect(() => {
       if (id) {
-         const device = devices.filter((dv) => dv?.uid === id);
-         setDevice(device[0]);
-      }
-   }, []);
+         const getDataById = async () => {
+            const dSnap = await getDoc(doc(db, 'devices', id));
+            setDevice(dSnap.data() as DeviceType);
+         };
 
-   const defaultValues = {
-      ...device,
-   };
-   console.log(defaultValues);
+         getDataById();
+      }
+   }, [id]);
 
    const {
       register,
-      setValue,
-      handleSubmit,
       formState: { errors },
    } = useForm<FieldValues>({
       defaultValues: {
-         id: '',
-         name: '',
-         addressIP: '',
-         device: '',
-         services: '',
-         password: '',
-         username: '',
+         id: device?.id,
+         device: device?.device,
       },
    });
 
-   const setCustomValue = (id: string, value: any) => {
-      setValue(id, value, {
-         shouldDirty: true,
-         shouldValidate: true,
-         shouldTouch: true,
-      });
-   };
-
-   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-      console.log(data);
-   };
+   if (device === undefined) {
+      <div> Loading ... </div>;
+   }
 
    return (
-      <div className="flex w-full">
-         <div className="px-6 mt-4 flex-1">
-            <Heading label="Quản lý thiết bị" />
+      <div className="flex flex-col w-full px-6">
+         <Heading label="Quản lý thiết bị" />
 
-            <div className="px-6 pt-4 rounded-2xl shadow-lg">
-               <h6 className="mb-5 text-primaryColor font-bold text-xl leading-[30px]">
-                  Thông tin thiết bị
-               </h6>
-               <div className="flex gap-6">
-                  <div className="w-2/4">
-                     <Input
-                        type="text"
-                        id="id"
-                        placeholder="Nhập mã thiết bị"
-                        label="Mã thiết bị:"
-                        register={register}
-                        errors={errors}
-                     />
-                  </div>
-                  <div className="w-2/4">
-                     <label htmlFor="device" className="mb-1">
-                        Loại thiết bị <sup className="text-red-500">*</sup>
-                     </label>
-                     <Select
-                        placeholder={'Chọn lại thiết bị'}
-                        id="device"
-                        isSearchable={false}
-                        isClearable
-                        classNames={{
-                           control: () => 'shadow-lg rounded-lg border-2',
-                           valueContainer: () => 'pt-[10px] pl-3 py-3',
-                           input: () => 'm-0',
-                        }}
-                        onChange={(value) =>
-                           setCustomValue('device', value?.label)
-                        }
-                        options={[
-                           { label: 'Kiosk' },
-                           { label: 'Display counter' },
-                        ]}
-                     />
-                  </div>
-               </div>
-               <div className="flex gap-6">
-                  <Input
-                     type="text"
-                     id="name"
-                     placeholder="Nhập tên thiết bị"
-                     label="Tên thiết bị:"
-                     register={register}
-                     errors={errors}
-                  />
-                  <Input
-                     type="text"
-                     id="username"
-                     placeholder="Nhập tài khoản"
-                     label="Tên đăng nhập:"
-                     register={register}
-                     errors={errors}
-                  />
-               </div>
-               <div className="flex gap-6">
-                  <Input
-                     type="text"
-                     id="addressIP"
-                     placeholder="Nhập địa chỉ IP"
-                     label="Địa chỉ IP:"
-                     register={register}
-                     errors={errors}
-                  />
-                  <Input
-                     type="password"
-                     id="password"
-                     placeholder="Nhập mật khẩu"
-                     label="Mật khẩu:"
-                     register={register}
-                     errors={errors}
-                  />
-               </div>
+         <div className="py-4 px-6 rounded-lg shadow-lg w-full">
+            <h5 className="text-primaryColor text-xl font-bold leading-[30px]">
+               Thông tin thiết bị
+            </h5>
+            <div>
                <Input
                   type="text"
-                  id="services"
-                  placeholder="Nhập dịch vụ sử dụng"
-                  label="Dịch vụ sử dụng:"
+                  id="id"
+                  label="Mã thiết bị"
                   register={register}
                   errors={errors}
+                  defaultValue={device?.id}
+                  required
                />
-               <p className="font-normal text-sm leading-5 pb-[92px]">
-                  <sup className="text-red-500">*</sup> Là trường thông tin bắt
-                  buộc
-               </p>
-            </div>
-
-            <div className="mt-6 flex items-center gap-8 justify-center">
-               <Link to={'/devices'}>
-                  <Button label="Hủy" outline />
-               </Link>
-               <Button label="Cập nhật" onSubmit={handleSubmit(onSubmit)} />
+               {/* <input
+                  type="text"
+                  id="id"
+                  defaultValue={device?.id}
+                  {...register?.('id', { required: true })}
+               /> */}
+               <div>
+                  <label htmlFor="device">Loại thiết bị:</label>
+                  <select
+                     id="device"
+                     {...register?.('device', { required: true })}
+                  >
+                     <option value="Kiosk">Kiosk</option>
+                     <option value="Display counter">Display counter</option>
+                  </select>
+               </div>
             </div>
          </div>
       </div>
@@ -159,3 +76,13 @@ const UpdateDevice = () => {
 };
 
 export default UpdateDevice;
+
+{
+   /* <select
+id="device"
+{...register?.('device', { required: true })}
+>
+<option value="Kiosk">Kiosk</option>
+<option value="Display counter">Display counter</option>
+</select> */
+}

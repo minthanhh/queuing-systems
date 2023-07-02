@@ -1,30 +1,34 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
+import { LocalizationProvider } from '@mui/x-date-pickers-pro';
+import { AdapterDateFns } from '@mui/x-date-pickers-pro/AdapterDateFns';
+import { Provider } from 'react-redux';
 import {
    createBrowserRouter,
    createRoutesFromElements,
    Route,
    RouterProvider,
 } from 'react-router-dom';
-import { Provider } from 'react-redux';
 import store from './redux/store';
 import {
    Dashboard,
    Device,
+   AddDevice,
+   UpdateDevice,
+   DetailDevice,
+   Service,
+   AddService,
+   DetailService,
    ForgotPassword,
    Report,
-   Service,
    NumberLevel,
    ManagerRole,
    ManagerAccount,
-   AddDevice,
-   UpdateDevice,
+   UpdateService,
 } from './pages';
 import { Auth, Root } from './routes';
 import UserLogs from './pages/root/UserLogs';
-import DetailDevice from './pages/root/devices/DetailDevice';
 // import Protected from './routes/Protected';
 
 const router = createBrowserRouter(
@@ -44,6 +48,15 @@ const router = createBrowserRouter(
                element={<UpdateDevice />}
             />
             <Route path="/services" element={<Service />} />
+            <Route path="/services/add-service" element={<AddService />} />
+            <Route
+               path="/services/detail-service/:id"
+               element={<DetailService />}
+            />
+            <Route
+               path="/services/update-service/:id"
+               element={<UpdateService />}
+            />
             <Route path="/number-levels" element={<NumberLevel />} />
             <Route path="/reports" element={<Report />} />
             <Route path="/manager-roles" element={<ManagerRole />} />
@@ -59,6 +72,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
    <Provider store={store}>
-      <RouterProvider router={router} />
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+         <RouterProvider router={router} />
+      </LocalizationProvider>
    </Provider>
 );

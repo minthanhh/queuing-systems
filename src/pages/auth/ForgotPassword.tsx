@@ -1,11 +1,10 @@
-import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
+import { useForm, FieldValues } from 'react-hook-form';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 import { Button, Hero, Input, Logo } from '../../components';
-import { useNavigate } from 'react-router-dom';
 import { useCallback, useState } from 'react';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../../configs/firebase.config';
+import { auth } from '../../configs/firebase.config';
 
 const ForgotPassword = () => {
    const navigate = useNavigate();
@@ -37,7 +36,7 @@ const ForgotPassword = () => {
             console.log(err);
          }
       })();
-   }, []);
+   }, [handleSubmit]);
 
    return (
       <div className="w-full h-full flex flex-row bg-primaryBg">

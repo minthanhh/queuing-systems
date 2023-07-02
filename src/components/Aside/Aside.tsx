@@ -2,7 +2,7 @@ import { Device } from '../../assets';
 import ProgressBar from 'react-customizable-progressbar';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { RootState } from '../../redux/store';
-import { getTotalCounts } from '../../redux/features/countSlice';
+import { getTotalCounts } from '../../redux/slices/countSlice';
 import { useEffect } from 'react';
 
 const Aside = () => {

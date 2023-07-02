@@ -54,6 +54,8 @@ export type DeviceType = {
     uid?: string
 } 
 
+export type DeviceSafe = Omit<DeviceType, 'status' | 'connect' | 'uid'>
+
 export type InfoType = {
     id: string;
     name: string;
@@ -73,3 +75,12 @@ export type InfoType = {
 export type InfoSafe = Partial<InfoType>
 
 
+
+
+
+export type ServiceType = {
+    id: string,
+    name: string,
+    status: string
+    description: string
+}

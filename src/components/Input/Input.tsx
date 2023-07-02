@@ -1,5 +1,5 @@
 import { UseFormRegister, FieldErrors, FieldValues } from 'react-hook-form';
-import { DeviceType } from '../../types';
+import { twMerge } from 'tailwind-merge';
 
 interface InputProps {
    label: string;
@@ -10,7 +10,8 @@ interface InputProps {
    errors: FieldErrors<FieldValues>;
    icon?: string;
    register?: UseFormRegister<FieldValues>;
-   value?: string | string[];
+   defaultValue?: string;
+   className?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -21,11 +22,12 @@ const Input: React.FC<InputProps> = ({
    required,
    placeholder,
    errors,
-   value,
+   className,
+   defaultValue,
 }) => {
    return (
-      <div className="w-full mb-4">
-         <label htmlFor={id} className="mb-1">
+      <div className={twMerge(`w-full mb-4`, className)}>
+         <label htmlFor={id} className="mb-1 font-semibold text-base leading-6">
             {label}
             <sup className="text-red-500 ml-[5px]">*</sup>
          </label>
@@ -40,7 +42,7 @@ const Input: React.FC<InputProps> = ({
                id={id}
                placeholder={placeholder}
                {...register?.(id, { required })}
-               value={value}
+               defaultValue={defaultValue}
             />
          </div>
       </div>

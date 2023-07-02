@@ -1,5 +1,5 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { getFirestore } from 'firebase/firestore'
+import { enableIndexedDbPersistence, getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
@@ -15,5 +15,6 @@ const app = getApps.length > 0 ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app)
 const auth = getAuth(app)
 
+enableIndexedDbPersistence(db);
 
 export { db, auth }

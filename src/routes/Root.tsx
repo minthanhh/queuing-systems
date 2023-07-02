@@ -78,7 +78,7 @@ const Root = () => {
       <div className="w-full h-full flex">
          <Sidebar routes={routes} />
 
-         <main className="w-[calc(100%_-_200px)]">
+         <main className="w-[calc(100%_-_200px)] overflow-y-auto">
             <Header breadcrumbs={breadcrumbs} />
             <Outlet />
          </main>
