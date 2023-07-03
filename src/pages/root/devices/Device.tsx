@@ -33,7 +33,6 @@ const Device = () => {
       { type: 'active', label: 'Hoạt động' },
       { type: 'in-active', label: 'Ngưng hoạt động' },
    ];
-
    const optionConnect = [
       { type: 'all', label: 'Tất cả' },
       { type: 'connect', label: 'Kết nối' },
@@ -43,7 +42,7 @@ const Device = () => {
    const [connected, setConnected] = useState('all');
    const [globalFilter, setGlobalFilter] = useState('');
    const dispatch = useAppDispatch();
-   let data = useAppSelector((state: RootState) => state.device.devices);
+   let { devices } = useAppSelector((state: RootState) => state.device);
    useEffect(() => {
       dispatch(getDevices());
    }, [dispatch]);
@@ -92,19 +91,19 @@ const Device = () => {
    );
 
    if (selected === 'active') {
-      data = data.filter((item) => item.status === selected);
+      devices = devices.filter((item) => item.status === selected);
    }
 
    if (selected === 'in-active') {
-      data = data.filter((item) => item.status === selected);
+      devices = devices.filter((item) => item.status === selected);
    }
 
    if (connected === 'connect') {
-      data = data.filter((item) => item.connect === connected);
+      devices = devices.filter((item) => item.connect === connected);
    }
 
    if (connected === 'in-connect') {
-      data = data.filter((item) => item.connect === connected);
+      devices = devices.filter((item) => item.connect === connected);
    }
 
    return (
@@ -166,7 +165,7 @@ const Device = () => {
                <Table
                   globalFilter={globalFilter}
                   columns={columns}
-                  data={data}
+                  data={devices}
                   onGlobalFilterChange={setGlobalFilter}
                />
 
@@ -180,48 +179,5 @@ const Device = () => {
       </div>
    );
 };
-
-// type SearchInputProps = {
-//    value: string | number;
-//    onChange: (value: string | number) => void;
-//    debounce?: number;
-// } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>;
-
-// const SearchInput = ({
-//    onChange,
-//    value: initialValue,
-//    debounce = 500,
-//    ...props
-// }: SearchInputProps) => {
-//    const [value, setValue] = useState(initialValue);
-
-//    useEffect(() => {
-//       setValue(initialValue);
-//    }, [initialValue]);
-
-//    useEffect(() => {
-//       const timeout = setTimeout(() => {
-//          onChange(value);
-//       }, debounce);
-
-//       return () => clearTimeout(timeout);
-//    }, [value]);
-
-//    return (
-//       <>
-//          <div className="flex items-center bg-white border-2 border-[#d4d4d7] rounded-lg p-3">
-//             <input
-//                {...props}
-//                value={value}
-//                onChange={(e) => setValue(e.target.value)}
-//                className="outline-none"
-//                type="text"
-//                placeholder="Nhập từ khóa"
-//             />
-//             <img src={SearchIcon} alt="" />
-//          </div>
-//       </>
-//    );
-// };
 
 export default Device;

@@ -84,3 +84,26 @@ export type ServiceType = {
     status: string
     description: string
 }
+
+
+export interface IRole {
+    roleName: string,
+    usersUsing: number,
+    description: string,
+    uid?: string
+}
+
+export interface IAccount {
+    username: string
+    fullName: string
+    phone: string
+    email: string
+    role: string
+    status: string
+    uid?: string
+    createdAt?: string
+    updatedAt?: string
+    password: string
+    comfirm: string
+}
+

@@ -23,9 +23,13 @@ import {
    ForgotPassword,
    Report,
    NumberLevel,
-   ManagerRole,
-   ManagerAccount,
+   Role,
    UpdateService,
+   AddRole,
+   UpdateRole,
+   Account,
+   AddAccount,
+   UpdateAccount,
 } from './pages';
 import { Auth, Root } from './routes';
 import UserLogs from './pages/root/UserLogs';
@@ -44,7 +48,7 @@ const router = createBrowserRouter(
                element={<DetailDevice />}
             />
             <Route
-               path="/devices/update-device/:id"
+               path="/devices/update-device/:deviceId"
                element={<UpdateDevice />}
             />
             <Route path="/services" element={<Service />} />
@@ -59,8 +63,27 @@ const router = createBrowserRouter(
             />
             <Route path="/number-levels" element={<NumberLevel />} />
             <Route path="/reports" element={<Report />} />
-            <Route path="/manager-roles" element={<ManagerRole />} />
-            <Route path="/manager-accounts" element={<ManagerAccount />} />
+
+            {/* Roles */}
+            <Route path="/manager-roles" element={<Role />} />
+            <Route path="/manager-roles/add-role" element={<AddRole />} />
+            <Route
+               path="/manager-roles/update-role/:roleId"
+               element={<UpdateRole />}
+            />
+
+            {/* Accounts */}
+            <Route path="/manager-accounts" element={<Account />} />
+            <Route
+               path="/manager-accounts/add-account"
+               element={<AddAccount />}
+            />
+            <Route
+               path="/manager-accounts/update-account/:accountId"
+               element={<UpdateAccount />}
+            />
+
+            {/* User Logs */}
             <Route path="/user-logs" element={<UserLogs />} />
          </Route>
          {/* </Route> */}

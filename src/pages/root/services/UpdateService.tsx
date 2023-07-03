@@ -4,7 +4,6 @@ import { FieldValues, useForm } from 'react-hook-form';
 
 const UpdateService = () => {
    const { id } = useParams();
-
    const {
       register,
       formState: { errors },

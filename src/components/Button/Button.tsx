@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 interface ButtonProps {
    disabled?: boolean;
@@ -13,6 +14,7 @@ const Button: React.FC<ButtonProps> = ({
    outline,
    onSubmit,
    onClick,
+   disabled,
 }) => {
    const handleSubmit = useCallback(() => {
       onSubmit?.();
@@ -20,14 +22,23 @@ const Button: React.FC<ButtonProps> = ({
 
    return (
       <button
-         className={`border w-[162px] border-primaryColor px-[24px] py-[10px] rounded-lg ${
+         className={twMerge(
+            'border w-[162px] px-[24px] py-[10px] rounded-lg',
             outline
                ? 'bg-transparent text-primaryColor'
-               : 'bg-primaryColor text-white'
-         }`}
+               : 'bg-primaryColor text-white',
+            disabled
+               ? 'cursor-not-allowed bg-orange-200 border-orange-200'
+               : 'cursor-pointer border-primaryColor'
+         )}
          onClick={onClick ? onClick : handleSubmit}
+         disabled={disabled}
       >
-         {label}
+         {disabled ? (
+            <span className="loading loading-dots loading-md"></span>
+         ) : (
+            label
+         )}
       </button>
    );
 };

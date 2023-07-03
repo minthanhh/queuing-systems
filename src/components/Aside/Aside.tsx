@@ -7,13 +7,15 @@ import { useEffect } from 'react';
 
 const Aside = () => {
    const dispatch = useAppDispatch();
-   const totalCounts = useAppSelector((state: RootState) => state.count);
+   const { device, service } = useAppSelector(
+      (state: RootState) => state.count
+   );
 
    useEffect(() => {
       dispatch(getTotalCounts());
    }, [dispatch]);
    return (
-      <div className="px-6 w-[445px] bg-white shadow-md top-0 right-0 absolute h-full -z-10 pt-[104px] pl-6">
+      <div className="px-6 w-[445px] bg-white shadow-md top-0 right-0 absolute z-50 h-full -z-10 pt-[104px] pl-6">
          <h2 className="text-primaryColor font-bold text-2xl leading-9 mb-4">
             Tổng quan
          </h2>
@@ -23,11 +25,7 @@ const Aside = () => {
                   <ProgressBar
                      className="first-circle"
                      radius={30}
-                     progress={
-                        (totalCounts.device.totalActive /
-                           totalCounts.device.total) *
-                        100
-                     }
+                     progress={(device.totalActive / device.total) * 100}
                      strokeColor="#f7921b"
                      pointerRadius={3}
                      pointerStrokeWidth={0}
@@ -44,9 +42,7 @@ const Aside = () => {
                            radius={20}
                            className="third-circle"
                            progress={
-                              (totalCounts.device.totalInActive /
-                                 totalCounts.device.total) *
-                              100
+                              (device.totalInActive / device.total) * 100
                            }
                            strokeColor="#f2291e"
                            strokeWidth={5}
@@ -61,8 +57,7 @@ const Aside = () => {
                         >
                            <div className="absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4">
                               {(
-                                 (totalCounts.device.totalActive /
-                                    totalCounts.device.total) *
+                                 (device.totalActive / device.total) *
                                  100
                               ).toFixed()}
                               %
@@ -73,7 +68,7 @@ const Aside = () => {
                </div>
                <div className="flex flex-col mr-[37px]">
                   <span className="font-extrabold text-2xl leading-9 text-[#535261]">
-                     {totalCounts.device.total}
+                     {device.total}
                   </span>
                   <span className="flex items-center gap-1 text-primaryColor text-sm font-semibold leading-5">
                      <img src={Device} alt="" />
@@ -85,14 +80,14 @@ const Aside = () => {
                      <span className="w-1 h-1 rounded-full bg-yellow-500 mr-1"></span>
                      Đang hoạt động
                      <span className="text-primaryColor text-sm leading-[18px] font-bold ml-3">
-                        {totalCounts.device.totalActive}
+                        {device.totalActive}
                      </span>
                   </span>
                   <span className="flex items-center">
                      <span className="w-1 h-1 rounded-full bg-gray-300 mr-1"></span>
                      Ngưng hoạt động
                      <span className="text-primaryColor text-sm leading-[18px] font-bold ml-3">
-                        {totalCounts.device.totalInActive}
+                        {device.totalInActive}
                      </span>
                   </span>
                </div>
@@ -102,11 +97,7 @@ const Aside = () => {
                   <ProgressBar
                      className="first-circle"
                      radius={30}
-                     progress={
-                        (totalCounts.service.totalActive /
-                           totalCounts.service.total) *
-                        100
-                     }
+                     progress={(service.totalActive / service.total) * 100}
                      strokeColor="#f7921b"
                      pointerRadius={3}
                      pointerStrokeWidth={0}
@@ -123,9 +114,7 @@ const Aside = () => {
                            radius={20}
                            className="third-circle"
                            progress={
-                              (totalCounts.service.totalInActive /
-                                 totalCounts.service.total) *
-                              100
+                              (service.totalInActive / service.total) * 100
                            }
                            strokeColor="#f2291e"
                            strokeWidth={5}
@@ -147,7 +136,7 @@ const Aside = () => {
                </div>
                <div className="flex flex-col mr-[37px]">
                   <span className="font-extrabold text-2xl leading-9 text-[#535261]">
-                     4.221
+                     {service.total}
                   </span>
                   <span className="flex items-center gap-1 text-primaryColor text-sm font-semibold leading-5">
                      <img src={Device} alt="" />
@@ -159,14 +148,14 @@ const Aside = () => {
                      <span className="w-1 h-1 rounded-full bg-yellow-500 mr-1"></span>
                      Đang hoạt động
                      <span className="text-primaryColor text-sm leading-[18px] font-bold ml-3">
-                        3.799
+                        {service.totalActive}
                      </span>
                   </span>
                   <span className="flex items-center">
                      <span className="w-1 h-1 rounded-full bg-gray-300 mr-1"></span>
                      Ngưng hoạt động
                      <span className="text-primaryColor text-sm leading-[18px] font-bold ml-3">
-                        422
+                        {service.totalInActive}
                      </span>
                   </span>
                </div>

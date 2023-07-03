@@ -9,7 +9,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
    return (
-      <div className="h-full flex flex-col w-[200px] shadow-md backdrop-blur-md bg-white">
+      <div className="h-full flex flex-col w-[200px] shadow-md backdrop-blur-md bg-white relative z-50">
          <div className="mt-[32px] mb-[54px] mx-[60px]">
             <img src={LogoAlta} alt="" />
          </div>
@@ -63,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
                            </span>
 
                            {children && (
-                              <div className="w-[290px] group-hover:visible group-hover:opacity-100 invisible opacity-0 absolute top-0 left-full overflow-hidden rounded-e-lg bg-white shadow-md transition-all ease-in duration-200">
+                              <div className="w-[290px] z-10 group-hover:visible group-hover:opacity-100 invisible opacity-0 absolute top-0 left-full overflow-hidden rounded-e-lg bg-white shadow-md transition-all ease-in duration-200">
                                  <nav>
                                     <ul className="flex flex-col">
                                        {children.map(

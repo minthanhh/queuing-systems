@@ -8,7 +8,7 @@ import {
    getPaginationRowModel,
 } from '@tanstack/react-table';
 import Pagination from './Pagination/Pagination';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 interface TableProps<T> {
    data: T[];
