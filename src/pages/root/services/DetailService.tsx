@@ -1,9 +1,9 @@
-import { useParams } from 'react-router-dom';
-import { Heading, Manager } from '../../../components';
-import { EditIcon } from '../../../assets';
+// import { useParams } from 'react-router-dom';
+import { Heading, Manager } from '@/components';
+import { EditIcon } from '@/assets';
 
 const DetailService = () => {
-   const { id } = useParams();
+   // const { id } = useParams();
 
    return (
       <div className="w-full">

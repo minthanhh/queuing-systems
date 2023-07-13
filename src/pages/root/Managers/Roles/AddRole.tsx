@@ -1,5 +1,5 @@
 import { FieldValues, useForm, SubmitHandler } from 'react-hook-form';
-import { Button, Heading, Input } from '../../../../components';
+import { Button, Heading, Input } from '@/components';
 import { twMerge } from 'tailwind-merge';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -216,7 +216,7 @@ const AddRole = () => {
          </div>
 
          <div className="flex gap-6 items-center justify-center mt-6">
-            <Link to={'/manager-roles'}>
+            <Link to={'/setting-systems/manager-roles'}>
                <Button outline label="Hủy bỏ" />
             </Link>
             <Button onSubmit={handleSubmit(onSubmit)} label="Thêm" />

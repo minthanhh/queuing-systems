@@ -28,3 +28,12 @@ export {default as ChevronLeft} from './images/chevron-left.svg'
 export {default as ChevronRight} from './images/chevron-right.svg'
 export {default as IconDownload} from './images/download.svg'
 export {default as CloseIcon} from './images/fi_x.svg'
+export {default as DownloadIcon} from './images/download-icon.svg'
+export {default as ArrowIcon} from './images/arrow.svg'
+export {default as LogoutIcon} from './images/logout.svg'
+export {default as AvatarTest} from './images/avatar-tesst.svg'
+export {default as CameraIcon} from './images/camera.svg'
+export {default as AngleRightIcon} from './images/angle-right.svg'
+
+
+export {default as DefaultAvatar} from './images/Avatar.png'

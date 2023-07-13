@@ -1,12 +1,12 @@
 import { Link, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import { FieldValues, useForm, SubmitHandler } from 'react-hook-form';
-import { Button, Heading, Input } from '../../../../components';
+import { Button, Heading, Input } from '@/components';
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../../hooks/storeHooks';
-import { RootState } from '../../../../redux/store';
-import { IRole } from '../../../../types';
-import { getRoles } from '../../../../redux/slices/roleSlice';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import { RootState } from '@/redux/store';
+import { IRole } from '@/types';
+import { getRoles } from '@/redux/slices/roleSlice';
 
 const UpdateRole = () => {
    const [role, setRole] = useState<IRole>();
@@ -229,7 +229,7 @@ const UpdateRole = () => {
          </div>
 
          <div className="flex gap-6 items-center justify-center mt-6">
-            <Link to={'/manager-roles'}>
+            <Link to={'/setting-systems/manager-roles'}>
                <Button outline label="Hủy bỏ" />
             </Link>
             <Button onSubmit={handleSubmit(onSubmit)} label="Thêm" />

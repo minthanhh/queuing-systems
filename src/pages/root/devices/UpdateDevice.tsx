@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useForm, FieldValues } from 'react-hook-form';
-import { DeviceType } from '../../../types';
-import { Heading, Input } from '../../../components';
-import { useAppDispatch, useAppSelector } from '../../../hooks/storeHooks';
-import { RootState } from '../../../redux/store';
-import { getDevices } from '../../../redux/slices/deviceSlice';
-import { CloseIcon } from '../../../assets';
+import { DeviceType } from '@/types';
+import { Heading, Input } from '@/components';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import { RootState } from '@/redux/store';
+import { getDevices } from '@/redux/slices/deviceSlice';
+import { CloseIcon } from '@/assets';
 
 const UpdateDevice = () => {
    const { deviceId } = useParams();

@@ -1,48 +1,76 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
+import { SerializedError } from '@reduxjs/toolkit';
 
-import { DropDown } from '../../../../assets';
-import { Button, Heading, Input } from '../../../../components';
-import { useAppDispatch, useAppSelector } from '../../../../hooks/storeHooks';
-import { RootState } from '../../../../redux/store';
-import { IAccount } from '../../../../types';
-import { getAccounts } from '../../../../redux/slices/accountSlice';
+import { DropDown } from '@/assets';
+import { GetTheIAccountKeys, IAccount } from '@/types';
+import { Button, Heading, Input } from '@/components';
+import { RootState } from '@/redux/store';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import { getAccounts, updateAccount } from '@/redux/slices/accountSlice';
+import { toast } from 'react-toastify';
 
 const UpdateAccount = () => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
-   const [account, setAccount] = useState<IAccount>();
    const { accountId } = useParams();
-
    const dispatch = useAppDispatch();
    const { accounts } = useAppSelector((state: RootState) => state.account);
+
+   const keysToRetrieve: GetTheIAccountKeys = useMemo(
+      () => [
+         'email',
+         'fullName',
+         'password',
+         'role',
+         'status',
+         'phone',
+         'username',
+         'comfirm',
+      ],
+      []
+   );
+
+   const {
+      register,
+      handleSubmit,
+      setValue,
+      formState: { errors },
+   } = useForm<FieldValues>();
 
    useEffect(() => {
       if (accountId && accounts.length > 0) {
          const account = accounts.filter(
             (account) => account.uid === accountId
          );
-         setAccount(account[0]);
+         keysToRetrieve.forEach((field) => {
+            setValue(field, account[0][field]);
+         });
       } else {
          dispatch(getAccounts());
       }
-   }, [accountId, accounts, dispatch]);
-
-   const {
-      reset,
-      register,
-      handleSubmit,
-      formState: { errors },
-   } = useForm<FieldValues>({
-      defaultValues: account,
-   });
+   }, [accountId, accounts, dispatch, setValue, keysToRetrieve]);
 
    const onSubmit: SubmitHandler<FieldValues> = (data) => {
-      console.log(data);
+      setIsLoading(true);
+      dispatch(updateAccount({ ...data, uid: accountId } as IAccount))
+         .unwrap()
+         .then(() => {
+            toast.success('Cập nhật tài khoản thành công.');
+            setIsLoading(false);
+         })
+         .catch((err: SerializedError) => {
+            toast.error(err.message);
+            setIsLoading(false);
+         });
    };
 
-   console.log(account);
+   // const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+   //    const { value: role, name } = e.target;
+   //    setAccount((prev) => ({ ...prev, [name]: role } as IAccount));
+   // };
+
    return (
       <div className="w-full mt-4 px-6">
          <Heading label="Quản lý tài khoản" className="mb-[10px]" />
@@ -60,7 +88,6 @@ const UpdateAccount = () => {
                      id="fullName"
                      placeholder="Nhập họ tên"
                      register={register}
-                     defaultValue={account?.fullName}
                      errors={errors}
                      required
                   />
@@ -70,7 +97,6 @@ const UpdateAccount = () => {
                      id="username"
                      placeholder="Nhập họ tên"
                      register={register}
-                     defaultValue={account?.username}
                      errors={errors}
                      required
                   />
@@ -83,7 +109,6 @@ const UpdateAccount = () => {
                      id="phone"
                      placeholder="Nhập số điện thoại"
                      register={register}
-                     defaultValue={account?.phone}
                      errors={errors}
                      required
                   />
@@ -93,7 +118,6 @@ const UpdateAccount = () => {
                      id="password"
                      placeholder="Nhập Mật khẩu"
                      register={register}
-                     defaultValue={account?.password}
                      errors={errors}
                      required
                   />
@@ -106,7 +130,6 @@ const UpdateAccount = () => {
                      id="email"
                      placeholder="Nhập email"
                      register={register}
-                     defaultValue={account?.email}
                      errors={errors}
                      required
                   />
@@ -116,7 +139,6 @@ const UpdateAccount = () => {
                      id="comfirm"
                      placeholder="Nhập lại mật khẩu"
                      register={register}
-                     defaultValue={account?.comfirm}
                      errors={errors}
                      required
                   />
@@ -142,12 +164,11 @@ const UpdateAccount = () => {
                         <select
                            className="flex-1 bg-transparent outline-none appearance-none px-3 py-[10px]"
                            id="role"
-                           defaultValue={account?.role}
                            {...register?.('role', { required: true })}
                         >
-                           <option value="Kế toán">Kế toán</option>
-                           <option value="Quản lý">Quản lý</option>
-                           <option value="Admin">Admin</option>
+                           <option value="accountant">Kế toán</option>
+                           <option value="manager">Quản lý</option>
+                           <option value="admin">Admin</option>
                         </select>
                         <img
                            src={DropDown}
@@ -175,11 +196,6 @@ const UpdateAccount = () => {
                         <select
                            className="flex-1 bg-transparent outline-none appearance-none px-3 py-[10px]"
                            id="status"
-                           defaultValue={
-                              account?.status === 'active'
-                                 ? 'active'
-                                 : 'in-active'
-                           }
                            {...register?.('status', { required: true })}
                         >
                            <option value="active">Hoạt động</option>
@@ -202,7 +218,7 @@ const UpdateAccount = () => {
          </div>
 
          <div className="flex items-center justify-center gap-6 my-6">
-            <Link to={'/manager-accounts'}>
+            <Link to={'/setting-systems/manager-accounts'}>
                <Button outline label="Hủy bỏ" />
             </Link>
             <Button

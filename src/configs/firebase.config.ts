@@ -1,6 +1,7 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { enableIndexedDbPersistence, getFirestore } from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCtOBTZ_Cmkhr6SeLUtjQzpd8zqN-UDc-E",
@@ -14,7 +15,7 @@ const firebaseConfig = {
 const app = getApps.length > 0 ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app)
 const auth = getAuth(app)
+const storage = getStorage(app)
 
-enableIndexedDbPersistence(db);
 
-export { db, auth }
+export { db, auth, storage }

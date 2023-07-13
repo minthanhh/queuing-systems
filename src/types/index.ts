@@ -83,6 +83,11 @@ export type ServiceType = {
     name: string,
     status: string
     description: string
+    to?: string
+    from?: string
+    prefix?: string,
+    surfix?: string
+    uid?: string,
 }
 
 
@@ -90,9 +95,10 @@ export interface IRole {
     roleName: string,
     usersUsing: number,
     description: string,
+    role?: string
     uid?: string
 }
-
+    
 export interface IAccount {
     username: string
     fullName: string
@@ -107,3 +113,62 @@ export interface IAccount {
     comfirm: string
 }
 
+
+export interface IUser {
+    email: string
+    displayName?: string
+    username?: string
+    accessToken?: string
+    photoURL?:string
+    uid: string
+    phone?: string
+    role?: string
+    password?: string
+}
+
+export interface ICoupons {
+    uid?: string
+    fullName: string
+    email: string 
+    phone: string
+    serviceName: string
+    grantNumber: number
+    status: string
+    grantTime: string
+    expiryDate: string
+}
+
+
+export interface IReport {
+    orderNumber: string
+    serviceName: string 
+    grantTime: string
+    status: string
+    source: string
+}
+
+
+export interface IUserLogs {
+    impactTime: string
+    ipDone: string
+    operations: string
+    username: string
+}
+
+
+
+export interface IGiveNumber {
+    orderNumber: string
+    customerName: string
+    serviceName: string
+    grantTime: string
+    expiryTime: string
+    status: string
+    source: string
+}
+
+
+
+export type CustomGetKeys<T, U extends string | number | symbol> = Array<keyof Omit<T, U>>
+
+export type GetTheIAccountKeys = CustomGetKeys<IAccount, 'uid' | 'createdAt' | 'updatedAt'>

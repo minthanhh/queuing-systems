@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import { addDoc, collection, getDocs } from "firebase/firestore"
-import { db } from "../../configs/firebase.config"
-import { DeviceType } from "../../types"
+import { db } from "@/configs/firebase.config"
+import { DeviceType } from "@/types"
 
 interface DeviceState {
     devices: DeviceType[]

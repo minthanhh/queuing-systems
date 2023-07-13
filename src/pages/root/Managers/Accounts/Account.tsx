@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Heading, Manager, Table } from '../../../../components';
-import { AddSquare, SearchIcon } from '../../../../assets';
-import { IAccount } from '../../../../types';
-import { ActionUpdate, ActiveState } from '../../../../components/Columns';
-import { useAppDispatch, useAppSelector } from '../../../../hooks/storeHooks';
-import { RootState } from '../../../../redux/store';
-import { getAccounts } from '../../../../redux/slices/accountSlice';
+
+import { IAccount } from '@/types';
+import { AddSquare, SearchIcon } from '@/assets';
+import { Heading, Manager, Table } from '@/components';
+import { AcctionRole, ActionUpdate, ActiveState } from '@/components/Columns';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import { RootState } from '@/redux/store';
+import { getAccounts } from '@/redux/slices/accountSlice';
 
 const Account = () => {
    const [globalFilter, setGlobalFilter] = useState('');
@@ -40,6 +41,7 @@ const Account = () => {
          {
             accessorKey: 'role',
             header: 'Vai trò',
+            cell: AcctionRole,
          },
          {
             accessorKey: 'status',
@@ -50,7 +52,10 @@ const Account = () => {
             accessorKey: 'update',
             header: '',
             cell: (cell) =>
-               ActionUpdate(cell, 'manager-accounts/update-account'),
+               ActionUpdate(
+                  cell,
+                  'setting-systems/manager-accounts/update-account'
+               ),
          },
       ],
       []
@@ -94,7 +99,7 @@ const Account = () => {
             <Manager
                icon={AddSquare}
                label="Thêm tài khoản"
-               path="/manager-accounts/add-account"
+               path="/setting-systems/manager-accounts/add-account"
             />
          </div>
       </div>

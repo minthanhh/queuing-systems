@@ -1,18 +1,19 @@
-import { useForm, FieldValues } from 'react-hook-form';
+import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import { Button, Hero, Input, Logo } from '../../components';
-import { useCallback, useState } from 'react';
-import { auth } from '../../configs/firebase.config';
+import { useState } from 'react';
+import { auth } from '@/configs/firebase.config';
+import { Button, Hero, Input, Logo } from '@/components';
+import { toast } from 'react-toastify';
 
 const ForgotPassword = () => {
-   const navigate = useNavigate();
    const [sendEmail, setSendEmail] = useState(false);
 
    const {
       register,
       handleSubmit,
+      reset,
       formState: { errors },
    } = useForm<FieldValues>({
       defaultValues: {
@@ -21,83 +22,57 @@ const ForgotPassword = () => {
       shouldUnregister: true,
    });
 
-   const handleBackToLogin = useCallback(() => {
-      navigate('/auth', { replace: true });
-   }, [navigate]);
+   const sendResetToUserEmail = async (email: string) => {
+      return await sendPasswordResetEmail(auth, email);
+   };
 
-   const handleResetPassword = useCallback(() => {
-      handleSubmit(async (data: FieldValues) => {
-         const { email } = data;
+   const onSumit: SubmitHandler<FieldValues> = (data) => {
+      setSendEmail(true);
 
-         try {
-            await sendPasswordResetEmail(auth, email);
-            setSendEmail(true);
-         } catch (err) {
-            console.log(err);
-         }
-      })();
-   }, [handleSubmit]);
+      sendResetToUserEmail(data.email)
+         .then(() => {
+            setSendEmail(false);
+            toast.success('Thành công! vui lòng kiểm tra Email của bạn.');
+            reset();
+         })
+         .catch((err) => {
+            toast.error('Người dùng không tồn tại');
+            setSendEmail(false);
+            reset();
+         });
+   };
 
    return (
       <div className="w-full h-full flex flex-row bg-primaryBg">
          <div className="w-4/12">
             <div className="w-[400px] flex flex-col align-center flex-1 mx-auto mt-[82px]">
                <Logo />
-               {sendEmail ? (
-                  <>
-                     <Input
-                        errors={errors}
-                        type="password"
-                        id="password"
-                        register={register}
-                        placeholder="password"
-                        label="Mật khẩu"
-                        required
-                     />
-                     <Input
-                        errors={errors}
-                        type="password"
-                        id="cofirmPassword"
-                        register={register}
-                        placeholder="comfirm password"
-                        label="Nhập lại mật khẩu"
-                        required
-                     />
-                  </>
-               ) : (
-                  <>
-                     <Input
-                        errors={errors}
-                        type="email"
-                        id="email"
-                        register={register}
-                        placeholder="email"
-                        label="Vui lòng nhập email để đặt lại mật khẩu của bạn"
-                        required
-                     />
-                  </>
-               )}
+
+               <h3 className="text-[#282739] leading-[33px] text-[22px] font-bold mb-4 text-center">
+                  Đặt lại mật khẩu
+               </h3>
+               <Input
+                  errors={errors}
+                  type="email"
+                  id="email"
+                  register={register}
+                  placeholder="email"
+                  label="Vui lòng nhập email để đặt lại mật khẩu của bạn"
+                  required
+               />
 
                <div className="mt-10 flex items-center gap-[24px]">
-                  {sendEmail ? (
-                     <Button label="Xác nhận" onClick={handleBackToLogin} />
-                  ) : (
-                     <>
-                        <Button
-                           label="Hủy"
-                           outline
-                           onClick={handleBackToLogin}
-                        />
-                        <Button
-                           label="Tiếp tục"
-                           onClick={handleResetPassword}
-                        />
-                     </>
-                  )}
+                  <Link to={'/login'}>
+                     <Button label="Hủy" outline />
+                  </Link>
+                  <Button
+                     label="Tiếp tục"
+                     onClick={handleSubmit(onSumit)}
+                     disabled={sendEmail}
+                  />
                </div>
             </div>
          </div>
-         ;
          <Hero />
       </div>
    );

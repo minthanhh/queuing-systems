@@ -1,10 +1,23 @@
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import { Button, Heading, Input } from '../../../components';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
+
+import { Button, Heading, Input } from '@/components';
+import { ServiceType } from '@/types';
+import { useAppDispatch } from '@/hooks/storeHooks';
+import { addService } from '@/redux/slices/serviceSlice';
+
 const AddService = () => {
+   const [autoIncreaseChecked, setAutoIncreaseChecked] = useState(false);
+   const [isLoading, setIsLoading] = useState(false);
+   const [{ prefix, surfix }, setPrefixOrSurfix] = useState({
+      prefix: false,
+      surfix: false,
+   });
+
+   const dispatch = useAppDispatch();
    const {
-      reset,
       register,
       handleSubmit,
       formState: { errors },
@@ -13,11 +26,26 @@ const AddService = () => {
          id: '',
          name: '',
          description: '',
+         from: '',
+         to: '',
+         prefix: '',
+         surfix: '',
       },
+      shouldUnregister: true,
    });
 
+   const handleCheckBox = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, checked } = e.target;
+      setPrefixOrSurfix((prev) => ({ ...prev, [name]: checked }));
+   };
+
    const onSubmit: SubmitHandler<FieldValues> = (data) => {
-      console.log(data);
+      if (data) {
+         setIsLoading(true);
+         dispatch(addService(data as ServiceType)).then(() => {
+            setIsLoading(false);
+         });
+      }
    };
 
    return (
@@ -86,56 +114,128 @@ const AddService = () => {
             </h2>
 
             <div className="flex flex-col gap-3">
-               <div className="flex items-center gap-[15px]">
-                  <div className="flex items-center gap-1">
-                     <input type="checkbox" />
-                     <span className="font-semibold text-base leading-6">
+               <div className="flex items-center gap-[15px] select-none">
+                  <div className="flex items-center gap-1 group">
+                     <input
+                        id="autoIncrease"
+                        type="checkbox"
+                        className="group-hover:cursor-pointer"
+                        onChange={(e) =>
+                           setAutoIncreaseChecked(e.target.checked)
+                        }
+                     />
+                     <label
+                        htmlFor="autoIncrease"
+                        className="group-hover:cursor-pointer font-semibold text-base leading-6"
+                     >
                         Tăng tự động từ:
-                     </span>
+                     </label>
                   </div>
                   <div className="flex gap-4 items-center">
                      <input
                         type="number"
-                        placeholder="0001"
-                        className="border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
+                        className={twMerge(
+                           'border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]',
+                           !autoIncreaseChecked ? 'cursor-not-allowed' : ''
+                        )}
+                        {...register?.('from', {
+                           required: autoIncreaseChecked,
+                        })}
+                        disabled={!autoIncreaseChecked}
                      />
                      <span className="font-semibold text-base leading-6">
                         đến
                      </span>
                      <input
                         type="number"
-                        placeholder="9999"
-                        className="border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
+                        className={twMerge(
+                           'border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]',
+                           !autoIncreaseChecked ? 'cursor-not-allowed' : ''
+                        )}
+                        {...register?.('to', { required: autoIncreaseChecked })}
+                        disabled={!autoIncreaseChecked}
                      />
                   </div>
                </div>
                <div className="flex items-center gap-[15px]">
-                  <div className="flex items-center gap-1">
-                     <input type="checkbox" />
-                     <span className="font-semibold text-base leading-6">
+                  <div className="flex items-center gap-1 select-none group">
+                     <input
+                        id="prefixLabelId"
+                        type="checkbox"
+                        name="prefix"
+                        onChange={handleCheckBox}
+                        className={twMerge(
+                           'group-hover:cursor-pointer',
+                           surfix
+                              ? 'checbox group-hover:cursor-not-allowed'
+                              : ''
+                        )}
+                        disabled={surfix}
+                     />
+                     <label
+                        htmlFor="prefixLabelId"
+                        className={twMerge(
+                           'group-hover:cursor-pointer font-semibold text-base leading-6',
+                           surfix
+                              ? 'checbox group-hover:cursor-not-allowed'
+                              : ''
+                        )}
+                     >
                         Prefix:
-                     </span>
+                     </label>
                   </div>
                   <div className="flex gap-4 items-center">
                      <input
+                        id="prefix"
                         type="number"
-                        placeholder="0001"
-                        className="border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
+                        className={twMerge(
+                           'border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]',
+                           !prefix ? 'cursor-not-allowed' : ''
+                        )}
+                        {...register?.('prefix', {
+                           required: prefix,
+                        })}
+                        disabled={!prefix}
                      />
                   </div>
                </div>
                <div className="flex items-center gap-[15px]">
-                  <div className="flex items-center gap-1">
-                     <input type="checkbox" />
-                     <span className="font-semibold text-base leading-6">
+                  <div className="group flex items-center gap-1 select-none">
+                     <input
+                        className={twMerge(
+                           'group-hover:cursor-pointer',
+                           prefix
+                              ? 'checbox group-hover:cursor-not-allowed'
+                              : ''
+                        )}
+                        id="surfixLabelId"
+                        type="checkbox"
+                        name="surfix"
+                        onChange={handleCheckBox}
+                        disabled={prefix}
+                     />
+                     <label
+                        htmlFor="surfixLabelId"
+                        className={twMerge(
+                           'group-hover:cursor-pointer font-semibold text-base leading-6',
+                           prefix
+                              ? 'checbox group-hover:cursor-not-allowed'
+                              : ''
+                        )}
+                     >
                         Surfix:
-                     </span>
+                     </label>
                   </div>
                   <div className="flex gap-4 items-center">
                      <input
                         type="number"
-                        placeholder="0001"
-                        className="border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
+                        id="surfix"
+                        className={twMerge(
+                           'border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]',
+                           !surfix ? 'disabled:cursor-not-allowed' : ''
+                        )}
+                        {...register?.('surfix', { required: surfix })}
+                        disabled={!surfix}
                      />
                   </div>
                </div>
@@ -159,7 +259,11 @@ const AddService = () => {
             <Link to={'/services'}>
                <Button label="Hủy" outline />
             </Link>
-            <Button label="Thêm thiết bị" onSubmit={handleSubmit(onSubmit)} />
+            <Button
+               label="Thêm thiết bị"
+               onSubmit={handleSubmit(onSubmit)}
+               disabled={isLoading}
+            />
          </div>
       </div>
    );

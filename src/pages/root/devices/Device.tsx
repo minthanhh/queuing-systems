@@ -2,22 +2,22 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useState, useMemo } from 'react';
 
 // Features
-import { useAppDispatch, useAppSelector } from '../../../hooks/storeHooks';
-import { getDevices } from '../../../redux/slices/deviceSlice';
-import { RootState } from '../../../redux/store';
-import { DeviceType } from '../../../types';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import { getDevices } from '@/redux/slices/deviceSlice';
+import { RootState } from '@/redux/store';
+import { DeviceType } from '@/types';
 
 // Assets - Components
-import { AddSquare, SearchIcon } from '../../../assets';
-import { Manager, Table } from '../../../components';
+import { AddSquare, SearchIcon } from '@/assets';
+import { Manager, Table } from '@/components';
 import {
    ActionDetail,
    ActionUpdate,
    ActiveConnect,
    ActiveState,
    MoreDescription,
-} from '../../../components/Columns';
-import SelectCustome from '../../../components/Select/Select';
+} from '@/components/Columns';
+import SelectCustome from '@/components/Select/Select';
 
 // const DropdownIndicator = (props: DropdownIndicatorProps) => {
 //    return (
@@ -109,9 +109,9 @@ const Device = () => {
    return (
       <div className="flex w-full">
          <div className="mt-4 flex-1">
-            <h2 className="text-primaryColor px-6 font-bold text-2xl leading-9 mb-4">
+            <h5 className="text-primaryColor px-6 font-bold text-2xl leading-9 mb-4">
                Danh sách thiết bị
-            </h2>
+            </h5>
             <div className="flex items-center px-6 justify-between mb-4 mr-[108px]">
                <div className="flex items-center gap-6">
                   <div>

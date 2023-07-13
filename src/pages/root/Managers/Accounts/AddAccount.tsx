@@ -1,12 +1,17 @@
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import { Button, Heading, Input } from '../../../../components';
-import { DropDown } from '../../../../assets';
-import { Link } from 'react-router-dom';
-import { twMerge } from 'tailwind-merge';
-import { useAppDispatch } from '../../../../hooks/storeHooks';
-import { addAccount } from '../../../../redux/slices/accountSlice';
-import { IAccount } from '../../../../types';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FieldValues, SubmitHandler, useForm, Resolver } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { SerializedError } from '@reduxjs/toolkit';
+import { twMerge } from 'tailwind-merge';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import { DropDown } from '@/assets';
+import { IAccount } from '@/types';
+import { Button, Heading, Input } from '@/components';
+import { useAppDispatch } from '@/hooks/storeHooks';
+import { addAccount } from '@/redux/slices/accountSlice';
+import { accountSchema } from '@/helpers/schema';
 
 const AddAccount = () => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -28,19 +33,24 @@ const AddAccount = () => {
          status: '',
          role: '',
       },
+      resolver: yupResolver(accountSchema) as Resolver<any, any>,
    });
 
    const onSubmit: SubmitHandler<FieldValues> = (data) => {
       setIsLoading(true);
 
       dispatch(addAccount(data as IAccount))
-         .then((_data) => {
-            if (_data) {
-               setIsLoading(false);
-               reset();
-            }
+         .unwrap()
+         .then(() => {
+            toast.success('Đã thêm thành công tài khoản!');
+            setIsLoading(false);
+            reset();
          })
-         .catch((err) => console.log(err));
+         .catch((err: SerializedError) => {
+            toast.error(err.message);
+            setIsLoading(false);
+            reset();
+         });
    };
 
    return (
@@ -137,10 +147,11 @@ const AddAccount = () => {
                            className="flex-1 bg-transparent outline-none appearance-none px-3 py-[10px]"
                            id="role"
                            {...register?.('role', { required: true })}
+                           placeholder="Chọn vai trò"
                         >
-                           <option value="Kế toán">Kế toán</option>
-                           <option value="Quản lý">Quản lý</option>
-                           <option value="Admin">Admin</option>
+                           <option value="accountant">Kế toán</option>
+                           <option value="manager">Quản lý</option>
+                           <option value="admin">Admin</option>
                         </select>
                         <img
                            src={DropDown}
@@ -169,6 +180,7 @@ const AddAccount = () => {
                            className="flex-1 bg-transparent outline-none appearance-none px-3 py-[10px]"
                            id="status"
                            {...register?.('status', { required: true })}
+                           defaultValue={'active'}
                         >
                            <option value="active">Hoạt động</option>
                            <option value="in-active">Ngưng Hoạt động</option>
@@ -189,8 +201,11 @@ const AddAccount = () => {
             </p>
          </div>
 
+         {errors.password && <div>{errors.password.message as string}</div>}
+         {errors.comfirm && <div>{errors.comfirm.message as string}</div>}
+
          <div className="flex items-center justify-center gap-6 my-6">
-            <Link to={'/manager-accounts'}>
+            <Link to={'/setting-systems/manager-accounts'}>
                <Button outline label="Hủy bỏ" />
             </Link>
             <Button

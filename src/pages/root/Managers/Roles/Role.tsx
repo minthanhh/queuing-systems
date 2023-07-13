@@ -1,18 +1,48 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { AddSquare } from '../../../../assets';
-import { IRole } from '../../../../types';
-import { Heading, Manager, Table } from '../../../../components';
-import { ActionUpdate } from '../../../../components/Columns';
-import { RootState } from '../../../../redux/store';
-import { getRoles } from '../../../../redux/slices/roleSlice';
-import { useAppDispatch, useAppSelector } from '../../../../hooks/storeHooks';
+import { AddSquare } from '@/assets';
+import { IRole } from '@/types';
+import { Heading, Manager, Table } from '@/components';
+import { AcctionRole, ActionUpdate } from '@/components/Columns';
+import { RootState } from '@/redux/store';
+import { getRoles } from '@/redux/slices/roleSlice';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import {
+   DocumentData,
+   QueryDocumentSnapshot,
+   QuerySnapshot,
+   collection,
+   collectionGroup,
+   endAt,
+   getDocs,
+   limit,
+   limitToLast,
+   onSnapshot,
+   orderBy,
+   query,
+   startAfter,
+} from 'firebase/firestore';
+import { db } from '@/configs/firebase.config';
+
+export type RoleType = {
+   roleName: string;
+   usersUsing: number;
+   description: string;
+   role?: string;
+   id?: string;
+};
 
 const ManagerRole = () => {
    const [isLoading, setIsLoading] = useState(false);
    const { roles } = useAppSelector((state: RootState) => state.role);
+   const [testRoles, setTestRoles] = useState<RoleType[]>([]);
+   const [lastVisible, setLastVisible] =
+      useState<QueryDocumentSnapshot<DocumentData>>();
+   const [firstVisible, setFirstVisible] =
+      useState<QueryDocumentSnapshot<DocumentData>>();
    const dispatch = useAppDispatch();
+   const PAGE_SIZE = 1;
 
    useEffect(() => {
       if (roles.length === 0) {
@@ -23,11 +53,77 @@ const ManagerRole = () => {
       }
    }, [dispatch, roles]);
 
+   useEffect(() => {
+      const q = query(
+         collectionGroup(db, 'reports'),
+         orderBy('createAt', 'desc'),
+         limit(PAGE_SIZE)
+      );
+      const unsubscribe = onSnapshot(q, (documents) => {
+         const tempPosts: RoleType[] = [];
+         documents.forEach((document) => {
+            tempPosts.push({
+               id: document.id,
+               ...document.data(),
+            } as RoleType);
+         });
+         setTestRoles(tempPosts);
+         setLastVisible(documents.docs[documents.docs.length - 1]);
+         setFirstVisible(documents.docs[0]);
+      });
+      return () => unsubscribe();
+   }, []);
+
+   console.log(lastVisible?.data());
+   const nextPage = async () => {
+      const postsRef = collectionGroup(db, 'reports');
+      const q = query(
+         postsRef,
+         orderBy('createdAt', 'desc'),
+         startAfter(lastVisible?.data().createdAt), // Pass the reference
+         limit(PAGE_SIZE)
+      );
+      const documents = await getDocs(q);
+      updateState(documents);
+   };
+
+   const previousPage = async () => {
+      const postsRef = collection(db, 'reports');
+      const q = query(
+         postsRef,
+         orderBy('createdAt', 'desc'),
+         endAt(firstVisible?.data().createdAt), // Use `endAt()` method and pass the reference
+         limitToLast(PAGE_SIZE)
+      );
+      const documents = await getDocs(q);
+      updateState(documents);
+   };
+
+   const updateState = (documents: QuerySnapshot<DocumentData>) => {
+      if (!documents.empty) {
+         const tempPosts: RoleType[] = [];
+         documents.forEach((document) => {
+            tempPosts.push({
+               id: document.id,
+               ...document.data(),
+            } as RoleType);
+         });
+         setTestRoles(tempPosts);
+      }
+      if (documents?.docs[0]) {
+         setFirstVisible(documents.docs[0]);
+      }
+      if (documents?.docs[documents.docs.length - 1]) {
+         setLastVisible(documents.docs[documents.docs.length - 1]);
+      }
+   };
+
    const columns = useMemo<ColumnDef<IRole>[]>(
       () => [
          {
             accessorKey: 'roleName',
             header: 'Tên vai trò',
+            cell: AcctionRole,
          },
          {
             accessorKey: 'usersUsing',
@@ -40,7 +136,8 @@ const ManagerRole = () => {
          {
             accessorKey: 'update',
             header: '',
-            cell: (cell) => ActionUpdate(cell, 'manager-roles/update-role'),
+            cell: (cell) =>
+               ActionUpdate(cell, 'setting-systems/manager-roles/update-role'),
          },
       ],
       []
@@ -78,14 +175,17 @@ const ManagerRole = () => {
          <Heading label="Danh sách vai trò" className="mb-[52px] px-6" />
 
          <div className="w-full flex items-start gap-6">
-            <Table data={roles} columns={columns} />
+            <Table data={testRoles} columns={columns} />
 
             <Manager
                icon={AddSquare}
                label="Thêm vai trò"
-               path="/manager-roles/add-role"
+               path="/setting-systems/manager-roles/add-role"
             />
          </div>
+
+         <button onClick={previousPage}>prev</button>
+         <button onClick={nextPage}>next</button>
       </div>
    );
 };

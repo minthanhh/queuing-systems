@@ -5,6 +5,7 @@ import countReducer from './slices/countSlice'
 import serviceReducer from './slices/serviceSlice'
 import roleReducer from './slices/roleSlice'
 import accountReducer from './slices/accountSlice'
+import numberReducer from './slices/numberSlice'
 
 
 const rootReducer = combineReducers({
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
     count: countReducer,
     service: serviceReducer,
     role: roleReducer,
-    account: accountReducer
+    account: accountReducer,
+    number: numberReducer
 })
 
 const store = configureStore({

@@ -1,13 +1,31 @@
-import { NavLink } from 'react-router-dom';
-import { LogoAlta } from '../../assets';
-import { Route } from '../../types';
-import { noActive, onActive } from '../../utils/styles';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+
+import { noActive, onActive } from '@/utils/styles';
+import { useAppDispatch } from '@/hooks/storeHooks';
+import { Route } from '@/types';
+import { LogoAlta, LogoutIcon } from '@/assets';
+import { logout } from '@/redux/slices/userSlice';
 
 interface SidebarProps {
    routes: Route[];
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
+   const [isLoading, setIsLoading] = useState(false);
+   const dispatch = useAppDispatch();
+   const navigate = useNavigate();
+
+   const handleLogout = () => {
+      setIsLoading(true);
+      dispatch(logout()).then(() => {
+         setIsLoading(false);
+         toast.success('Đăng xuất thành công 🥳');
+         navigate('/login', { replace: true });
+      });
+   };
+
    return (
       <div className="h-full flex flex-col w-[200px] shadow-md backdrop-blur-md bg-white relative z-50">
          <div className="mt-[32px] mb-[54px] mx-[60px]">
@@ -15,10 +33,10 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
          </div>
          <nav className="">
             <ul className="flex flex-col">
-               {routes.map(({ label, icon, path, more, children }, index) =>
+               {routes.map(({ label, icon, path, more, children }, idx) =>
                   path ? (
                      <NavLink
-                        key={label + index}
+                        key={`${label}${idx}`}
                         className={({ isActive }) =>
                            isActive ? onActive : noActive
                         }
@@ -38,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
                                  <ul>
                                     {children.map(({ label, path }, index) => (
                                        <NavLink
-                                          key={path + index}
+                                          key={`${label}` + index}
                                           className="transition-all ease-linear duration-200 px-4 hover:bg-[#FFF2E7] hover:text-primaryColor"
                                           to={path}
                                        >
@@ -53,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
                   ) : (
                      <>
                         <div
-                           key={label + index}
+                           key={`${label} + ${idx}`}
                            className="group px-3 relative text-textGray hover:bg-[#FFF2E7] hover:cursor-pointer select-none"
                         >
                            <span className="group-hover:text-primaryColor flex items-center gap-2 py-3 font-semibold text-base leading-6">
@@ -93,6 +111,17 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
                )}
             </ul>
          </nav>
+
+         <div className="mx-auto mt-auto mb-[30px]">
+            <button
+               className="bg-[#fff2e7] flex gap-3 items-center justify-start py-[14px] px-3 font-semibold text-base leading-6 rounded-lg w-[176px] text-primaryColor"
+               onClick={handleLogout}
+               disabled={isLoading}
+            >
+               <img src={LogoutIcon} alt="" />
+               Đăng xuất
+            </button>
+         </div>
       </div>
    );
 };

@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { Header, Sidebar } from '../components';
 import {
    Dashboard,
@@ -9,6 +9,8 @@ import {
    Service,
    Setting,
 } from '../assets';
+import { useAppSelector } from '@/hooks/storeHooks';
+import { RootState } from '@/redux/store';
 
 const Root = () => {
    const routes = [
@@ -34,7 +36,7 @@ const Root = () => {
          icon: NumLevel,
          label: 'Cấp số',
          breadcrumb: 'Danh sách cấp số',
-         path: '/number-levels',
+         path: '/give-number',
       },
       {
          icon: Report,
@@ -50,29 +52,41 @@ const Root = () => {
          children: [
             {
                label: 'Quản lý vai trò',
-               path: '/manager-roles',
+               path: '/setting-systems/manager-roles',
             },
             {
                label: 'Quản lý Tài khoản',
-               path: '/manager-accounts',
+               path: '/setting-systems/manager-accounts',
             },
             {
                label: 'Nhật ký người dùng',
-               path: '/user-logs',
+               path: '/setting-systems/user-logs',
             },
          ],
       },
    ];
 
+   const { profile } = useAppSelector((state: RootState) => state.user);
+
    const breadcrumbs = routes.map((route) => {
-      return route.children
-         ? {
-              breadcrumb: route.breadcrumb,
-              path: route.path,
-              labels: route.children,
-           }
-         : { breadcrumb: route.breadcrumb, path: route.path };
+      if (route.children) {
+         return {
+            breadcrumb: route.breadcrumb,
+            label: route.label,
+            path: route.path,
+            children: route.children,
+         };
+      }
+      return {
+         breadcrumb: route.breadcrumb,
+         label: route.label,
+         path: route.path,
+      };
    });
+
+   if (!profile) {
+      return <Navigate to={'/login'} replace />;
+   }
 
    return (
       <div className="w-full h-full flex">

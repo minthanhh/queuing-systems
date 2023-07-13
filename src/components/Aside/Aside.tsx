@@ -15,7 +15,7 @@ const Aside = () => {
       dispatch(getTotalCounts());
    }, [dispatch]);
    return (
-      <div className="px-6 w-[445px] bg-white shadow-md top-0 right-0 absolute z-50 h-full -z-10 pt-[104px] pl-6">
+      <div className="px-6 w-[450px] bg-white shadow-md top-0 right-0 absolute z-50 h-full pt-[104px] pl-6">
          <h2 className="text-primaryColor font-bold text-2xl leading-9 mb-4">
             Tổng quan
          </h2>

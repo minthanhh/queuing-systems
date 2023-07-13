@@ -7,6 +7,7 @@ interface ButtonProps {
    outline?: boolean;
    onSubmit?: () => void;
    onClick?: () => void;
+   static?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import { collection, getCountFromServer, query, where } from "firebase/firestore"
-import { db } from "../../configs/firebase.config"
+import { db } from "@/configs/firebase.config"
 
 interface CountState {
         device: {

@@ -2,10 +2,10 @@ import Select from 'react-select';
 import { Link } from 'react-router-dom';
 import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
 
-import { useAppDispatch } from '../../../hooks/storeHooks';
-import { Button, Heading, Input } from '../../../components';
-import { DeviceType } from '../../../types';
-import { createDevice } from '../../../redux/slices/deviceSlice';
+import { useAppDispatch } from '@/hooks/storeHooks';
+import { Button, Heading, Input } from '@/components';
+import { DeviceType } from '@/types';
+import { createDevice } from '@/redux/slices/deviceSlice';
 
 const AddDevice = () => {
    const dispatch = useAppDispatch();

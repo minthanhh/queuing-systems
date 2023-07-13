@@ -1,20 +1,22 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
-import { useState } from 'react';
+import { SerializedError } from '@reduxjs/toolkit';
+
+import { Button, Hero, Input, Logo } from '@/components';
+import { Warning } from '@/assets';
+import { useAppDispatch } from '@/hooks/storeHooks';
+import { login } from '@/redux/slices/userSlice';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '@/configs/firebase.config';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { doc, getDoc } from 'firebase/firestore';
+import { IUser } from '@/types';
 
-import { Button, Hero, Input, Logo } from '../components';
-import { Warning } from '../assets';
-
-import { auth } from '../configs/firebase.config';
-import { useAppDispatch } from '../hooks/storeHooks';
-import { login } from '../redux/slices/userSlice';
-
-const Auth = () => {
+const Login = () => {
    const [isLoading, setIsLoading] = useState(false);
-   const navigate = useNavigate();
    const dispatch = useAppDispatch();
-
+   const navigate = useNavigate();
    const {
       register,
       handleSubmit,
@@ -24,39 +26,51 @@ const Auth = () => {
          email: '',
          password: '',
       },
-      shouldUnregister: true,
    });
 
-   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-      const { email, password } = data;
-
-      await signInWithEmailAndPassword(auth, email, password)
-         .then((userCredential) => {
-            const { user } = userCredential;
-            if (user && user?.email) {
-               setIsLoading(true);
-               dispatch(
-                  login({
-                     id: user.uid,
-                     displayName: user.displayName,
-                     email: user.email,
-                     photoUrl: user.photoURL,
-                  })
-               );
-               navigate('/', { replace: true });
-            }
-         })
-         .catch((err) => {
-            console.log(err);
-         })
-         .finally(() => setIsLoading(false));
+   const signIn = async (email: string, password: string) => {
+      return await signInWithEmailAndPassword(auth, email, password);
    };
 
-   if (isLoading) {
-      return <div>Loading ....</div>;
-   }
+   const onSubmit: SubmitHandler<FieldValues> = (data) => {
+      const { email, password } = data;
+      if (data) {
+         setIsLoading(true);
 
-   // if (currentUser) return <Navigate to={'/'} />;
+         signIn(email, password)
+            .then(async ({ user }) => {
+               const snap = await getDoc(doc(db, 'manager-accounts', user.uid));
+               if (!snap.exists()) {
+                  setIsLoading(false);
+                  toast.error('Tài khoản không tồn tại!');
+                  return;
+               }
+
+               const { role, username, password, phone } = snap.data() as IUser;
+
+               dispatch(
+                  login({
+                     email: user.email || '',
+                     displayName: user.displayName || '',
+                     photoURL: user.photoURL || '',
+                     uid: user.uid,
+                     phone,
+                     username,
+                     role,
+                     password,
+                  })
+               );
+               setIsLoading(false);
+               toast.success('Đăng nhập thành công');
+               navigate('/', { replace: true });
+            })
+            .catch((err: SerializedError) => {
+               toast.error(err.message);
+               setIsLoading(false);
+            });
+      }
+   };
+
    return (
       <div className="w-full h-full flex flex-row bg-primaryBg">
          <div className="w-4/12">
@@ -96,7 +110,11 @@ const Auth = () => {
                   </Link>
                )}
 
-               <Button onSubmit={handleSubmit(onSubmit)} label="Đăng nhập" />
+               <Button
+                  onSubmit={handleSubmit(onSubmit)}
+                  label="Đăng nhập"
+                  disabled={isLoading}
+               />
                {(errors.email || errors.password) && (
                   <Link
                      to={'/forgot-password'}
@@ -112,4 +130,4 @@ const Auth = () => {
    );
 };
 
-export default Auth;
+export default Login;

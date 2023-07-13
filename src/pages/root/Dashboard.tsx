@@ -30,7 +30,7 @@ const Dashboard = () => {
    ];
 
    return (
-      <div className="flex w-[890px] h-full">
+      <div className="flex w-[calc(100%_-_427px)] h-full">
          <div className="px-6 mt-4 flex-1">
             <h2 className="text-primaryColor font-bold text-2xl leading-9 mb-4">
                Biều đồ cấp số

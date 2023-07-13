@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
-import { EditIcon } from '../../../assets';
-import { Heading, Manager } from '../../../components';
+import { EditIcon } from '@/assets';
+import { Heading, Manager } from '@/components';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../configs/firebase.config';
-import { DeviceType } from '../../../types';
+import { db } from '@/configs/firebase.config';
+import { DeviceType } from '@/types';
 
 const DetailDevice = () => {
    const { id } = useParams();
@@ -99,7 +99,7 @@ const DetailDevice = () => {
             <Manager
                label="Cập nhật thiết bị"
                icon={EditIcon}
-               path={'/update-device/' + id}
+               path={'/devices/update-device/' + id}
             />
          </div>
       </div>

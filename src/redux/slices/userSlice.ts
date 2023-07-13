@@ -1,27 +1,53 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { User } from "../../types"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { signOut } from 'firebase/auth'
+import { IUser } from "@/types"
+import { auth } from "@/configs/firebase.config"
+
 
 interface AuthState {
-    user: User | null
+    profile: IUser | null
 }
 
 const initialState: AuthState = {
-    user: null
+    profile: null,
 }
 
-const UserSlice = createSlice({
-    name: 'user',
-    initialState,
-    reducers: {
-        login(state, action: PayloadAction<User>) {
-            state.user = action.payload
-        },
-        logout(state, action) {
+export const login = createAsyncThunk('user/login', async (_user: IUser | null, {rejectWithValue}) => {
+    try {
+      return _user
+    } catch (err) {
+       return rejectWithValue(err)
+    }
+})
 
-        }
+export const logout = createAsyncThunk('user/logout', async () => {
+    try {
+        await signOut(auth)
+        return null
+    } catch (err) {
+        console.log(err)
     }
 })
 
 
-export const { login, logout} = UserSlice.actions
+
+const UserSlice = createSlice({
+    name: 'user',
+    initialState,
+    reducers: {},
+    extraReducers(builder) {
+        builder.addCase(login.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.profile = action.payload
+            }
+        })
+        builder.addCase(logout.fulfilled, (state, action) => {
+            if (action.payload === null) {
+                state.profile = action.payload
+            }
+        })
+    },
+})
+
+
 export default UserSlice.reducer

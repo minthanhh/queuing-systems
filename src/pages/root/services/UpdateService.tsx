@@ -1,9 +1,9 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button, Heading, Input } from '../../../components';
 import { FieldValues, useForm } from 'react-hook-form';
 
 const UpdateService = () => {
-   const { id } = useParams();
+   // const { id } = useParams();
    const {
       register,
       formState: { errors },
