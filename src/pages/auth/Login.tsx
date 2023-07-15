@@ -93,6 +93,7 @@ const Login = () => {
                   register={register}
                   errors={errors}
                   required
+                  eyeToggle
                />
                {errors.email || errors.password ? (
                   <div className="flex items-center gap-1 mb-[19px]">

@@ -1,29 +1,36 @@
 import { useState } from 'react';
-import { DropDown } from '../../assets';
-
-type Otions = {
-   type: string;
-   label: string;
-};
+import { DropDown } from '@/assets';
+import { twMerge } from 'tailwind-merge';
+import { Options } from '@/types';
 
 interface SelectCustomeProps {
-   options: Otions[];
-   value: string;
-   onChange: (e: any) => void;
+   options: Options[];
+   value?: string;
+   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+   className?: string;
+   name?: string;
 }
 
 const SelectCustome: React.FC<SelectCustomeProps> = ({
    options,
    onChange,
    value,
+   className,
+   name,
 }) => {
    const [rotateUp, setRotateUp] = useState(false);
    const hanldeIconRotate = () => {
       setRotateUp((v) => !v);
    };
    return (
-      <div className="border-2 rounded-lg border-[#d4d4d7] flex items-center relative w-[300px]">
+      <div
+         className={twMerge(
+            'border-2 rounded-lg border-[#d4d4d7] flex items-center relative w-[300px]',
+            className
+         )}
+      >
          <select
+            name={name}
             className="appearance-none w-full bg-transparent py-[10px] px-3 outline-none"
             onClick={hanldeIconRotate}
             onChange={onChange}

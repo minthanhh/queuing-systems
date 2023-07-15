@@ -6,12 +6,16 @@ export const ActiveState = ({ row }: any) => {
    const { status } = row.original;
    return (
       <>
-         <span
-            className={`w-2 h-2 mr-1 inline-block  rounded-full ${
-               status === 'active' ? 'bg-green-500' : 'bg-red-500'
-            }`}
-         ></span>
-         {status === 'active' ? 'Hoạt động' : 'Ngưng hoạt động'}
+         {status ? (
+            <>
+               <span
+                  className={`w-2 h-2 mr-1 inline-block  rounded-full ${
+                     status === 'active' ? 'bg-green-500' : 'bg-red-500'
+                  }`}
+               ></span>
+               {status === 'active' ? 'Hoạt động' : 'Ngưng hoạt động'}
+            </>
+         ) : null}
       </>
    );
 };

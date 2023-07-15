@@ -37,3 +37,6 @@ export {default as AngleRightIcon} from './images/angle-right.svg'
 
 
 export {default as DefaultAvatar} from './images/Avatar.png'
+export {default as ImageEmptyResult} from './images/empty.png'
+
+export {default as BackIcon} from './images/back-square.svg'

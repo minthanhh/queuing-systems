@@ -1,4 +1,5 @@
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
@@ -9,13 +10,11 @@ import { useAppDispatch } from '@/hooks/storeHooks';
 import { addService } from '@/redux/slices/serviceSlice';
 
 const AddService = () => {
-   const [autoIncreaseChecked, setAutoIncreaseChecked] = useState(false);
    const [isLoading, setIsLoading] = useState(false);
    const [{ prefix, surfix }, setPrefixOrSurfix] = useState({
       prefix: false,
       surfix: false,
    });
-
    const dispatch = useAppDispatch();
    const {
       register,
@@ -26,8 +25,8 @@ const AddService = () => {
          id: '',
          name: '',
          description: '',
-         from: '',
-         to: '',
+         from: '0001',
+         to: '9999',
          prefix: '',
          surfix: '',
       },
@@ -41,10 +40,17 @@ const AddService = () => {
 
    const onSubmit: SubmitHandler<FieldValues> = (data) => {
       if (data) {
+         console.log(data);
          setIsLoading(true);
-         dispatch(addService(data as ServiceType)).then(() => {
-            setIsLoading(false);
-         });
+         dispatch(addService(data as ServiceType))
+            .then(() => {
+               setIsLoading(false);
+               toast.success('Dịch vụ đã được thêm thành công');
+            })
+            .catch((err) => {
+               toast.error(err);
+               setIsLoading(false);
+            });
       }
    };
 
@@ -119,10 +125,9 @@ const AddService = () => {
                      <input
                         id="autoIncrease"
                         type="checkbox"
-                        className="group-hover:cursor-pointer"
-                        onChange={(e) =>
-                           setAutoIncreaseChecked(e.target.checked)
-                        }
+                        className="group-hover:cursor-not-allowed"
+                        disabled
+                        checked
                      />
                      <label
                         htmlFor="autoIncrease"
@@ -135,13 +140,11 @@ const AddService = () => {
                      <input
                         type="number"
                         className={twMerge(
-                           'border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]',
-                           !autoIncreaseChecked ? 'cursor-not-allowed' : ''
+                           'border-2 w-20 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]'
                         )}
                         {...register?.('from', {
-                           required: autoIncreaseChecked,
+                           required: true,
                         })}
-                        disabled={!autoIncreaseChecked}
                      />
                      <span className="font-semibold text-base leading-6">
                         đến
@@ -149,11 +152,9 @@ const AddService = () => {
                      <input
                         type="number"
                         className={twMerge(
-                           'border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]',
-                           !autoIncreaseChecked ? 'cursor-not-allowed' : ''
+                           'border-2 w-20 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]'
                         )}
-                        {...register?.('to', { required: autoIncreaseChecked })}
-                        disabled={!autoIncreaseChecked}
+                        {...register?.('to', { required: true })}
                      />
                   </div>
                </div>
@@ -189,8 +190,9 @@ const AddService = () => {
                         id="prefix"
                         type="number"
                         className={twMerge(
-                           'border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]',
-                           !prefix ? 'cursor-not-allowed' : ''
+                           'border-2 w-20 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261] transition-all ease-out duration-75',
+                           !prefix ? 'cursor-not-allowed' : '',
+                           errors['prefix'] ? 'border-red-500' : ''
                         )}
                         {...register?.('prefix', {
                            required: prefix,
@@ -203,7 +205,7 @@ const AddService = () => {
                   <div className="group flex items-center gap-1 select-none">
                      <input
                         className={twMerge(
-                           'group-hover:cursor-pointer',
+                           'group-hover:cursor-pointer transition-all ease-out duration-75',
                            prefix
                               ? 'checbox group-hover:cursor-not-allowed'
                               : ''
@@ -231,8 +233,9 @@ const AddService = () => {
                         type="number"
                         id="surfix"
                         className={twMerge(
-                           'border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]',
-                           !surfix ? 'disabled:cursor-not-allowed' : ''
+                           'border-2 w-20 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261] transition-all ease-out duration-75',
+                           !surfix ? 'disabled:cursor-not-allowed' : '',
+                           errors['surfix'] ? 'border-red-500' : ''
                         )}
                         {...register?.('surfix', { required: surfix })}
                         disabled={!surfix}

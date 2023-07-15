@@ -1,9 +1,54 @@
-// import { useParams } from 'react-router-dom';
-import { Heading, Manager } from '@/components';
+import { Heading, Manager, Table } from '@/components';
 import { EditIcon } from '@/assets';
+import { useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/configs/firebase.config';
+import { ServiceType, IOrderNumberAndState } from '@/types';
+import { ColumnDef } from '@tanstack/react-table';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import { RootState } from '@/redux/store';
+import { getOrderNumberAndState } from '@/redux/slices/numberSlice';
 
 const DetailService = () => {
-   // const { id } = useParams();
+   const [isLoading, setIsLoading] = useState(false);
+   const [service, setService] = useState<ServiceType>();
+   const { orderAndState } = useAppSelector((state: RootState) => state.number);
+   const { serviceId } = useParams();
+   const dispatch = useAppDispatch();
+
+   useEffect(() => {
+      if (serviceId) {
+         const getDataById = async () => {
+            const dSnap = await getDoc(doc(db, 'services', serviceId));
+            setService(dSnap.data() as ServiceType);
+         };
+         getDataById();
+      }
+   }, [serviceId]);
+
+   useEffect(() => {
+      if (orderAndState.length === 0) {
+         setIsLoading(true);
+         dispatch(getOrderNumberAndState(serviceId as string)).then(() => {
+            setIsLoading(false);
+         });
+      }
+   }, [orderAndState.length, dispatch, serviceId]);
+
+   const columns = useMemo<ColumnDef<IOrderNumberAndState>[]>(
+      () => [
+         {
+            header: 'Số thứ tự',
+            accessorKey: 'orderNumber',
+         },
+         {
+            header: 'Trạng thái',
+            accessorKey: 'status',
+         },
+      ],
+      []
+   );
 
    return (
       <div className="w-full">
@@ -14,22 +59,22 @@ const DetailService = () => {
          <div className="flex items-start">
             <div className="md:flex gap-6 mx-6 mb-8 w-full">
                <div className="bg-white rounded-lg shadow-lg p-3 w-full md:w-1/3 flex-col flex-1">
-                  <h5 className="text-primaryColor text-xl leading-[30px] font-bold">
+                  <h5 className="text-primaryColor text-xl leading-[30px] font-bold mb-3">
                      Thông tin dịch vụ
                   </h5>
 
-                  <div className="flex flex-col gap-3">
-                     <div className="flex items-center font-semibold leading-6 text-base">
+                  <div className="flex flex-col gap-3 mb-4">
+                     <div className="flex items-center font-semibold leading-6 text-base gap-5">
                         <h6>Mã dịch vụ:</h6>
-                        <span>201</span>
+                        <span>{service?.id}</span>
                      </div>
-                     <div className="flex items-center font-semibold leading-6 text-base">
+                     <div className="flex items-center font-semibold leading-6 text-base gap-5">
                         <h6>Tên dịch vụ:</h6>
-                        <span>Khám tim mạch</span>
+                        <span>{service?.name}</span>
                      </div>
-                     <div className="flex items-center font-semibold leading-6 text-base">
+                     <div className="flex items-center font-semibold leading-6 text-base gap-5">
                         <h6>Mô tả:</h6>
-                        <span>Chuyên các bệnh lý về tim</span>
+                        <span>{service?.description}</span>
                      </div>
                   </div>
 
@@ -41,39 +86,58 @@ const DetailService = () => {
                      <div className="flex items-center gap-[15px]">
                         <div className="flex items-center gap-1">
                            <span className="font-semibold text-base leading-6">
-                              Tăng tự động từ:
+                              Tăng tự động:
                            </span>
                         </div>
                         <div className="flex gap-4 items-center">
                            <input
                               type="number"
-                              placeholder="0001"
-                              className="border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
+                              defaultValue={service?.from}
+                              className="border-2 w-20 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
                            />
                            <span className="font-semibold text-base leading-6">
                               đến
                            </span>
                            <input
+                              defaultValue={service?.to}
                               type="number"
-                              placeholder="9999"
-                              className="border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
+                              className="border-2 w-20 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
                            />
                         </div>
                      </div>
-                     <div className="flex items-center gap-[15px]">
-                        <div className="flex items-center">
-                           <span className="font-semibold text-base leading-6">
-                              Prefix:
-                           </span>
+                     {service?.prefix ? (
+                        <div className="flex items-center gap-[15px]">
+                           <div className="flex items-center">
+                              <span className="font-semibold text-base leading-6">
+                                 Prefix:
+                              </span>
+                           </div>
+                           <div className="flex items-center">
+                              <input
+                                 type="number"
+                                 defaultValue={service.prefix}
+                                 className="border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
+                              />
+                           </div>
                         </div>
-                        <div className="flex items-center">
-                           <input
-                              type="number"
-                              placeholder="0001"
-                              className="border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
-                           />
+                     ) : null}
+
+                     {service?.surfix ? (
+                        <div className="flex items-center gap-[15px]">
+                           <div className="flex items-center">
+                              <span className="font-semibold text-base leading-6">
+                                 Prefix:
+                              </span>
+                           </div>
+                           <div className="flex items-center">
+                              <input
+                                 type="number"
+                                 defaultValue={service.surfix}
+                                 className="border-2 w-16 px-3 py-[10px] border-borderGray outline-none rounded-lg appearance-none font-normal text-base leading-6 text-[#535261]"
+                              />
+                           </div>
                         </div>
-                     </div>
+                     ) : null}
                      <div className="flex items-center">
                         <div className="flex items-center">
                            <span className="font-semibold text-base leading-6">
@@ -84,7 +148,13 @@ const DetailService = () => {
                   </div>
                </div>
                <div className="w-full md:w-4/6 bg-white shadow-lg px-6 py-4 rounded-md">
-                  Table
+                  <Table
+                     data={orderAndState}
+                     columns={columns}
+                     className="pl-0"
+                     isLoading={isLoading}
+                     pageSize={8}
+                  />
                </div>
             </div>
 

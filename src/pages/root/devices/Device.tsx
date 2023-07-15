@@ -18,6 +18,7 @@ import {
    MoreDescription,
 } from '@/components/Columns';
 import SelectCustome from '@/components/Select/Select';
+import { optionState } from '@/helpers/options';
 
 // const DropdownIndicator = (props: DropdownIndicatorProps) => {
 //    return (
@@ -28,11 +29,6 @@ import SelectCustome from '@/components/Select/Select';
 // };
 
 const Device = () => {
-   const optionSelect = [
-      { type: 'all', label: 'Tất cả' },
-      { type: 'active', label: 'Hoạt động' },
-      { type: 'in-active', label: 'Ngưng hoạt động' },
-   ];
    const optionConnect = [
       { type: 'all', label: 'Tất cả' },
       { type: 'connect', label: 'Kết nối' },
@@ -112,14 +108,14 @@ const Device = () => {
             <h5 className="text-primaryColor px-6 font-bold text-2xl leading-9 mb-4">
                Danh sách thiết bị
             </h5>
-            <div className="flex items-center px-6 justify-between mb-4 mr-[108px]">
+            <div className="flex items-center pl-6 justify-between mb-4 mr-[108px]">
                <div className="flex items-center gap-6">
                   <div>
                      <h6 className="mb-1 text-[#282739]">
                         Trạng thái hoạt động
                      </h6>
                      <SelectCustome
-                        options={optionSelect}
+                        options={optionState}
                         onChange={(e) => setSelected(e.target.value)}
                         value={selected}
                      />

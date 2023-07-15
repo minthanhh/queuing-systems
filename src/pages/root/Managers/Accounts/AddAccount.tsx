@@ -102,6 +102,7 @@ const AddAccount = () => {
                      register={register}
                      errors={errors}
                      required
+                     eyeToggle
                   />
                </div>
 
@@ -123,6 +124,7 @@ const AddAccount = () => {
                      register={register}
                      errors={errors}
                      required
+                     eyeToggle
                   />
                </div>
 

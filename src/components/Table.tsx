@@ -5,12 +5,14 @@ import {
    flexRender,
    OnChangeFn,
    getFilteredRowModel,
+   PaginationState,
    getPaginationRowModel,
 } from '@tanstack/react-table';
 import Pagination from './Pagination/Pagination';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { twMerge } from 'tailwind-merge';
+import { ImageEmptyResult } from '@/assets';
 
 interface TableProps<T> {
    data: T[];
@@ -19,6 +21,7 @@ interface TableProps<T> {
    onGlobalFilterChange?: OnChangeFn<any>;
    isLoading?: boolean;
    className?: string;
+   pageSize?: number;
 }
 
 const Table = <T,>(props: TableProps<T>) => {
@@ -29,19 +32,20 @@ const Table = <T,>(props: TableProps<T>) => {
       onGlobalFilterChange,
       isLoading,
       className,
+      pageSize: Size,
    } = props;
-   // const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-   //    pageIndex: 0,
-   //    pageSize: 5,
-   // });
+   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
+      pageIndex: 0,
+      pageSize: 5 || Size,
+   });
 
-   // const pagination = useMemo(
-   //    () => ({
-   //       pageIndex,
-   //       pageSize,
-   //    }),
-   //    [pageIndex, pageSize]
-   // );
+   const pagination = useMemo(
+      () => ({
+         pageIndex,
+         pageSize,
+      }),
+      [pageIndex, pageSize]
+   );
 
    const defaultData = useMemo(() => [], []);
 
@@ -50,14 +54,11 @@ const Table = <T,>(props: TableProps<T>) => {
       columns,
       state: {
          globalFilter,
-         pagination: {
-            pageSize: 5,
-            pageIndex: 0,
-         },
+         pagination,
       },
       onGlobalFilterChange,
       enableGlobalFilter: true,
-      manualPagination: true,
+      onPaginationChange: setPagination,
       getCoreRowModel: getCoreRowModel(),
       getFilteredRowModel: getFilteredRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
@@ -68,7 +69,7 @@ const Table = <T,>(props: TableProps<T>) => {
          <div className="w-full">
             <div className="flex items-start gap-6">
                <div className="w-full flex-1 px-6">
-                  <table className="w-full h-auto bg-white rounded-xl overflow-hidden shadow-lg text-left">
+                  <table className="w-full h-auto flex-1 bg-white rounded-xl overflow-hidden shadow-lg text-left">
                      <thead className="bg-neutral-500/30">
                         <tr>
                            {Array(columns.length)
@@ -81,7 +82,7 @@ const Table = <T,>(props: TableProps<T>) => {
                                  >
                                     <Skeleton
                                        height={24}
-                                       width={150}
+                                       width={110}
                                        className="px-2"
                                     />
                                  </th>
@@ -89,14 +90,14 @@ const Table = <T,>(props: TableProps<T>) => {
                         </tr>
                      </thead>
                      <tbody className="w-full h-[500px]">
-                        {Array(5)
+                        {Array(4)
                            .fill({})
                            .map((_, index) => (
                               <tr
                                  key={_ + index}
                                  className="even:bg-neutral-200/30"
                               >
-                                 {Array(5)
+                                 {Array(columns.length)
                                     .fill({})
                                     .map((_, index) => (
                                        <td
@@ -104,7 +105,7 @@ const Table = <T,>(props: TableProps<T>) => {
                                           className="px-4 py-3 text-left"
                                        >
                                           <Skeleton
-                                             width={120}
+                                             width={110}
                                              height={21}
                                              className="px-2"
                                           />
@@ -162,14 +163,31 @@ const Table = <T,>(props: TableProps<T>) => {
                   ))
                ) : (
                   <tr className="even:bg-orange-50">
-                     <td className="px-4 py-3 border border-[#ffe3cd] text-left">
-                        <div>No data</div>
+                     <td
+                        className="px-4 py-3 border border-[#ffe3cd] text-left"
+                        colSpan={columns.length}
+                     >
+                        <div className="w-full flex items-center justify-center flex-col my-10">
+                           <img
+                              className="object-cover w-auto h-[220px]"
+                              src={ImageEmptyResult}
+                              alt=""
+                           />
+                           <p className="text-2xl text-bold">
+                              Kết quả không tìm thấy!
+                           </p>
+                        </div>
                      </td>
                   </tr>
                )}
             </tbody>
          </table>
-         <Pagination />
+
+         <Pagination
+            pageCount={table.getPageCount()}
+            pageIndex={table.getState().pagination.pageIndex}
+            setPageIndex={table.setPageIndex}
+         />
       </div>
    );
 };

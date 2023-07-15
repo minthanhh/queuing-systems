@@ -8,15 +8,20 @@ import { AcctionRole, ActionUpdate, ActiveState } from '@/components/Columns';
 import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { RootState } from '@/redux/store';
 import { getAccounts } from '@/redux/slices/accountSlice';
+import Skeleton from 'react-loading-skeleton';
 
 const Account = () => {
    const [globalFilter, setGlobalFilter] = useState('');
+   const [isLoading, setIsLoading] = useState(false);
    const dispatch = useAppDispatch();
    const { accounts } = useAppSelector((state: RootState) => state.account);
 
    useEffect(() => {
       if (accounts.length === 0) {
-         dispatch(getAccounts());
+         setIsLoading(true);
+         dispatch(getAccounts()).then(() => {
+            setIsLoading(false);
+         });
       }
    }, [dispatch, accounts]);
 
@@ -94,13 +99,21 @@ const Account = () => {
                columns={columns}
                globalFilter={globalFilter}
                onGlobalFilterChange={setGlobalFilter}
+               isLoading={isLoading}
             />
 
-            <Manager
-               icon={AddSquare}
-               label="Thêm tài khoản"
-               path="/setting-systems/manager-accounts/add-account"
-            />
+            {isLoading ? (
+               <div className="flex flex-col gap-1 px-1 bg-white shadow-lg text-center py-3 rounded-s-lg">
+                  <Skeleton width={28} height={28} />
+                  <Skeleton width={72} height={20} />
+               </div>
+            ) : (
+               <Manager
+                  icon={AddSquare}
+                  label="Thêm tài khoản"
+                  path="/setting-systems/manager-accounts/add-account"
+               />
+            )}
          </div>
       </div>
    );

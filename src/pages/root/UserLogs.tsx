@@ -51,10 +51,6 @@ const UserLogs = () => {
       []
    );
 
-   if (isLoading) {
-      return <div>Loading ...</div>;
-   }
-
    return (
       <div className="w-full">
          <div className="pl-6 pr-[105px] flex justify-end mb-4">
@@ -78,6 +74,7 @@ const UserLogs = () => {
             globalFilter={globalFilter}
             onGlobalFilterChange={setGlobalFilter}
             className="pr-[105px]"
+            isLoading={isLoading}
          />
       </div>
    );

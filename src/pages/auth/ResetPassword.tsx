@@ -1,4 +1,4 @@
-import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
+import { useForm, FieldValues, SubmitHandler, Resolver } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { confirmPasswordReset } from 'firebase/auth';
 import { useState } from 'react';
@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 
 import { Button, Hero, Input, Logo } from '@/components';
 import { auth } from '@/configs/firebase.config';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { comfirmSchema } from '@/helpers/schema';
 
 const ResetPassword = () => {
    const [searchParams] = useSearchParams();
@@ -20,8 +22,9 @@ const ResetPassword = () => {
    } = useForm<FieldValues>({
       defaultValues: {
          password: '',
+         comfirm: '',
       },
-      shouldUnregister: true,
+      resolver: yupResolver(comfirmSchema) as Resolver<any, any>,
    });
 
    const resetPassword = async (oobCode: string, newPassword: string) => {
@@ -60,8 +63,20 @@ const ResetPassword = () => {
                   id="password"
                   register={register}
                   placeholder="Nhập mật khẩu mới"
-                  label="Mật khẩu "
+                  label="Mật khẩu"
                   required
+                  eyeToggle
+               />
+
+               <Input
+                  errors={errors}
+                  type="password"
+                  id="comfirm"
+                  register={register}
+                  placeholder="Nhập lại mật khẩu mới"
+                  label="Nhập lại mật khẩu"
+                  required
+                  eyeToggle
                />
 
                <div className="mt-10 flex items-center justify-center">

@@ -1,34 +1,37 @@
 // import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
-import { AddSquare, SearchIcon } from '../../../assets';
-import { Manager, Table } from '../../../components';
+import { AddSquare, SearchIcon } from '@/assets';
+import { Manager, Table } from '@/components';
 import { useEffect, useMemo, useState } from 'react';
-import SelectCustome from '../../../components/Select/Select';
+import SelectCustome from '@/components/Select/Select';
 import { ColumnDef } from '@tanstack/react-table';
-import { ServiceType } from '../../../types';
-import {
-   ActionDetail,
-   ActionUpdate,
-   ActiveState,
-} from '../../../components/Columns';
-import { useAppDispatch, useAppSelector } from '../../../hooks/storeHooks';
-import { getServices } from '../../../redux/slices/serviceSlice';
-import { RootState } from '../../../redux/store';
+import { ServiceType } from '@/types';
+import { ActionDetail, ActionUpdate, ActiveState } from '@/components/Columns';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import { getServices } from '@/redux/slices/serviceSlice';
+import { RootState } from '@/redux/store';
 
 const Service = () => {
-   const options = [
-      { type: 'all', label: 'Tất cả' },
-      { type: 'active', label: 'Hoạt động' },
-      { type: 'in-active', label: 'Ngưng hoạt động' },
-   ];
    const [selected, setSelected] = useState('all');
    const [globalFilter, setGlobalFilter] = useState('');
+   const [isLoading, setIsLoading] = useState(false);
    const dispatch = useAppDispatch();
-   const { services } = useAppSelector((state: RootState) => state.service);
+   let { services } = useAppSelector((state: RootState) => state.service);
 
    useEffect(() => {
-      dispatch(getServices());
+      setIsLoading(true);
+      dispatch(getServices()).then(() => {
+         setIsLoading(false);
+      });
    }, [dispatch]);
 
+   const options = useMemo(
+      () => [
+         { type: 'all', label: 'Tất cả' },
+         { type: 'active', label: 'Hoạt động' },
+         { type: 'in-active', label: 'Ngưng hoạt động' },
+      ],
+      []
+   );
    const columns = useMemo<ColumnDef<ServiceType>[]>(
       () => [
          {
@@ -62,9 +65,17 @@ const Service = () => {
       []
    );
 
+   if (selected === 'active') {
+      services = services.filter((item) => item.status === selected);
+   }
+
+   if (selected === 'in-active') {
+      services = services.filter((item) => item.status === selected);
+   }
+
    return (
       <div className="w-full">
-         <div className="mt-4 px-6">
+         <div className="mt-4 pl-6">
             <h2 className="text-primaryColor font-bold leading-9 text-2xl mb-4">
                Quản lý dịch vụ
             </h2>
@@ -75,7 +86,7 @@ const Service = () => {
                         Từ khoá
                      </h6>
                      <SelectCustome
-                        onChange={setSelected}
+                        onChange={(e) => setSelected(e.target.value)}
                         options={options}
                         value={selected}
                      />
@@ -99,8 +110,13 @@ const Service = () => {
             </div>
          </div>
          <div className="flex gap-6">
-            <Table columns={columns} data={services} />
-
+            <Table
+               columns={columns}
+               data={services}
+               onGlobalFilterChange={setGlobalFilter}
+               globalFilter={globalFilter}
+               isLoading={isLoading}
+            />
             <Manager
                icon={AddSquare}
                label="Thêm dịch vụ"

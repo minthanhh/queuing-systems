@@ -21,6 +21,7 @@ import {
    GiveNumber,
    Profile,
    ResetPassword,
+   DetailGiveNumber,
 } from '../pages';
 import { Auth, Protected, Root } from '../layouts';
 
@@ -45,14 +46,18 @@ const router = createBrowserRouter(
                path="/devices/update-device/:deviceId"
                element={<UpdateDevice />}
             />
+            <Route
+               path="/devices/detail-give-number/:giveNumberId"
+               element={<DetailGiveNumber />}
+            />
             <Route path="/services" element={<Service />} />
             <Route path="/services/add-service" element={<AddService />} />
             <Route
-               path="/services/detail-service/:id"
+               path="/services/detail-service/:serviceId"
                element={<DetailService />}
             />
             <Route
-               path="/services/update-service/:id"
+               path="/services/update-service/:serviceId"
                element={<UpdateService />}
             />
             <Route path="/reports" element={<Report />} />

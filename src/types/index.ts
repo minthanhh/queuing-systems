@@ -156,15 +156,45 @@ export interface IUserLogs {
 }
 
 
+export type Options = {
+    type: string;
+    label: string;
+ };
+
+
+ export interface IOrderNumberAndState {
+    orderNumber: string
+    status: string
+ }
+
+
+
 
 export interface IGiveNumber {
     orderNumber: string
     customerName: string
-    serviceName: string
-    grantTime: string
-    expiryTime: string
+    phone: string
     status: string
+    email: string,
+    grantTime: string,
+    expiryTime: string,
+    serviceId: string,
+    serviceName: string
     source: string
+    uid?: string
+}
+
+
+export type IService = {
+    id: string,
+    name: string,
+    status: string
+    description: string
+    to?: string
+    from?: string
+    prefix?: string,
+    surfix?: string
+    uid?: string,
 }
 
 
@@ -172,3 +202,4 @@ export interface IGiveNumber {
 export type CustomGetKeys<T, U extends string | number | symbol> = Array<keyof Omit<T, U>>
 
 export type GetTheIAccountKeys = CustomGetKeys<IAccount, 'uid' | 'createdAt' | 'updatedAt'>
+export type GetTheIServiceKeys = CustomGetKeys<IService, 'uid'>

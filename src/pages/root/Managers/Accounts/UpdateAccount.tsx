@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
 import { SerializedError } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 
 import { DropDown } from '@/assets';
 import { GetTheIAccountKeys, IAccount } from '@/types';
@@ -10,7 +11,6 @@ import { Button, Heading, Input } from '@/components';
 import { RootState } from '@/redux/store';
 import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { getAccounts, updateAccount } from '@/redux/slices/accountSlice';
-import { toast } from 'react-toastify';
 
 const UpdateAccount = () => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -120,6 +120,7 @@ const UpdateAccount = () => {
                      register={register}
                      errors={errors}
                      required
+                     eyeToggle
                   />
                </div>
 
@@ -141,6 +142,7 @@ const UpdateAccount = () => {
                      register={register}
                      errors={errors}
                      required
+                     eyeToggle
                   />
                </div>
 

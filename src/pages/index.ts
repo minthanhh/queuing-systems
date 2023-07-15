@@ -15,6 +15,7 @@ export { default as Device }from './root/Devices/Device'
 export { default as AddDevice }from './root/Devices/AddDevice'
 export { default as DetailDevice }from './root/Devices/DetailDevice'
 export { default as UpdateDevice }from './root/Devices/UpdateDevice'
+export { default as DetailGiveNumber }from './root/Devices/DetailGiveNumber'
 
 // Pages - services
 export { default as Service }from './root/Services/Service'

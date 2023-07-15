@@ -11,3 +11,7 @@ export { default as Heading } from './Heading/Heading'
 export { default as Manager } from './Manager/Manager'
 export {default as Table} from './Table'
 export {default as Pagination} from './Pagination/Pagination'
+
+
+export {default as CustomSelect}  from './Select/Select'
+export {default as Popup}  from './Popup/Popup'
