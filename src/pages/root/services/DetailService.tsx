@@ -9,6 +9,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { RootState } from '@/redux/store';
 import { getOrderNumberAndState } from '@/redux/slices/numberSlice';
+import { ActionUse } from '@/components/Columns';
 
 const DetailService = () => {
    const [isLoading, setIsLoading] = useState(false);
@@ -45,6 +46,7 @@ const DetailService = () => {
          {
             header: 'Trạng thái',
             accessorKey: 'status',
+            cell: ActionUse,
          },
       ],
       []
@@ -73,8 +75,8 @@ const DetailService = () => {
                         <span>{service?.name}</span>
                      </div>
                      <div className="flex items-center font-semibold leading-6 text-base gap-5">
-                        <h6>Mô tả:</h6>
-                        <span>{service?.description}</span>
+                        <h6 className="w-min">Mô tả:</h6>
+                        <span className="flex-1">{service?.description}</span>
                      </div>
                   </div>
 
@@ -161,7 +163,7 @@ const DetailService = () => {
             <Manager
                label="Cập nhật dịch vụ"
                icon={EditIcon}
-               path="/services/update-service"
+               path={'/services/update-service/' + serviceId}
             />
          </div>
       </div>

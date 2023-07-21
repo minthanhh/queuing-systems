@@ -12,13 +12,14 @@ const initialState: ServiceState = {
     services: [],
 }
 
-export const getServices = createAsyncThunk('service/getServices', async () => {
+export const getServices = createAsyncThunk('service/getServices', async (_, thunk) => {
     try {
-        const qn = await getDocs(collection(db, 'services')) 
-        const services = qn.docs.map(doc => ({ uid: doc.id,...doc.data() as ServiceType})) 
-        return services
+        const coll = collection(db, 'services')
+        const snapShot = await getDocs(coll) 
+        const data = snapShot.docs.map(doc => ({ uid: doc.id,...doc.data() as ServiceType})) 
+        return data
     } catch (err) {
-        console.log(err)
+        thunk.rejectWithValue(err)
     }
 })
 
@@ -30,9 +31,6 @@ export const addService = createAsyncThunk('service/AddService', async (_service
         await setDoc(doc(db, 'counter', ref.id), {
             count: Number(_service.from)
         })
-
-
-        console.log(createdSerivce)
 
         return createdSerivce
     } catch (err) {

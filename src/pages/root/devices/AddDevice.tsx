@@ -1,13 +1,20 @@
 import Select from 'react-select';
 import { Link } from 'react-router-dom';
 import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
+import { useState } from 'react';
 
-import { useAppDispatch } from '@/hooks/storeHooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { Button, Heading, Input } from '@/components';
-import { DeviceType } from '@/types';
+import { DeviceType, IUserLogs } from '@/types';
 import { createDevice } from '@/redux/slices/deviceSlice';
+import { RootState } from '@/redux/store';
+import { SerializedError } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
+import { createUserLog } from '@/redux/slices/userLogsSlice';
 
 const AddDevice = () => {
+   const [isLoading, setIsLoading] = useState(false);
+   const { profile } = useAppSelector((state: RootState) => state.user);
    const dispatch = useAppDispatch();
 
    const {
@@ -37,8 +44,27 @@ const AddDevice = () => {
    };
 
    const onSubmit: SubmitHandler<FieldValues> = (data) => {
-      dispatch(createDevice(data as DeviceType));
-      reset();
+      setIsLoading(true);
+
+      dispatch(createDevice(data as DeviceType))
+         .unwrap()
+         .then(({ device: { name } }) => {
+            setIsLoading(false);
+            reset();
+            toast.success('Thiết bị đã được thêm thành công.');
+
+            dispatch(
+               createUserLog({
+                  username: profile?.username,
+                  operations: `Đã thêm thêm thiết bị ${name}`,
+               } as IUserLogs)
+            );
+         })
+         .catch((err: SerializedError) => {
+            setIsLoading(false);
+            reset();
+            toast.error(err.message);
+         });
    };
 
    return (
@@ -147,7 +173,8 @@ const AddDevice = () => {
                </Link>
                <Button
                   label="Thêm thiết bị"
-                  onSubmit={handleSubmit(onSubmit)}
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isLoading}
                />
             </div>
          </div>

@@ -6,16 +6,18 @@ import { SerializedError } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import { DropDown } from '@/assets';
-import { GetTheIAccountKeys, IAccount } from '@/types';
+import { GetTheIAccountKeys, IAccount, IUserLogs } from '@/types';
 import { Button, Heading, Input } from '@/components';
 import { RootState } from '@/redux/store';
 import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { getAccounts, updateAccount } from '@/redux/slices/accountSlice';
+import { createUserLog } from '@/redux/slices/userLogsSlice';
 
 const UpdateAccount = () => {
-   const [isLoading, setIsLoading] = useState<boolean>(false);
    const { accountId } = useParams();
    const dispatch = useAppDispatch();
+   const [isLoading, setIsLoading] = useState<boolean>(false);
+   const { profile } = useAppSelector((state: RootState) => state.user);
    const { accounts } = useAppSelector((state: RootState) => state.account);
 
    const keysToRetrieve: GetTheIAccountKeys = useMemo(
@@ -56,7 +58,13 @@ const UpdateAccount = () => {
       setIsLoading(true);
       dispatch(updateAccount({ ...data, uid: accountId } as IAccount))
          .unwrap()
-         .then(() => {
+         .then(({ username }) => {
+            dispatch(
+               createUserLog({
+                  username: profile?.username,
+                  operations: `Cập nhật thông tin người dùng ${username}`,
+               } as IUserLogs)
+            );
             toast.success('Cập nhật tài khoản thành công.');
             setIsLoading(false);
          })
@@ -65,11 +73,6 @@ const UpdateAccount = () => {
             setIsLoading(false);
          });
    };
-
-   // const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-   //    const { value: role, name } = e.target;
-   //    setAccount((prev) => ({ ...prev, [name]: role } as IAccount));
-   // };
 
    return (
       <div className="w-full mt-4 px-6">

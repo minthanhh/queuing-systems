@@ -1,32 +1,30 @@
 import { useEffect, useMemo, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { IUserLogs } from '../../types';
-import { db } from '../../configs/firebase.config';
-import { Table } from '../../components';
-import { ActionTestTime } from '../../components/Columns';
-import { SearchIcon } from '../../assets';
+import { IUserLogs } from '@/types';
+import { Table } from '@/components';
+import { SearchIcon } from '@/assets';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import { RootState } from '@/redux/store';
+import { getUserLogs } from '@/redux/slices/userLogsSlice';
 
 const UserLogs = () => {
    const [isLoading, setIsLoading] = useState(false);
-   const [userLogs, setUserLogs] = useState<IUserLogs[]>([]);
    const [globalFilter, setGlobalFilter] = useState('');
+   const dispatch = useAppDispatch();
+   const { userLogs } = useAppSelector((state: RootState) => state.userLogs);
 
    useEffect(() => {
-      if (userLogs.length === 0) {
-         setIsLoading(true);
-         getUserLogs().then(() => {
+      setIsLoading(true);
+
+      dispatch(getUserLogs())
+         .then(() => {
+            setIsLoading(false);
+         })
+         .catch((err) => {
             setIsLoading(false);
          });
-      }
-   }, [userLogs]);
-
-   const getUserLogs = async () => {
-      const snap = await getDocs(collection(db, 'user-logs'));
-      const userLogs = snap.docs.map((doc) => doc.data() as IUserLogs);
-      setUserLogs(userLogs);
-   };
+   }, [dispatch]);
 
    const columns = useMemo<ColumnDef<IUserLogs>[]>(
       () => [
@@ -37,7 +35,6 @@ const UserLogs = () => {
          {
             header: 'Thời gian tác động',
             accessorKey: 'impactTime',
-            cell: (cell) => ActionTestTime(cell),
          },
          {
             header: 'IP thực hiện',

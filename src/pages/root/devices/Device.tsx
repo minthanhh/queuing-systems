@@ -1,13 +1,12 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useState, useMemo } from 'react';
 
-// Features
 import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { getDevices } from '@/redux/slices/deviceSlice';
 import { RootState } from '@/redux/store';
 import { DeviceType } from '@/types';
+import { optionConnect, optionState } from '@/helpers/options';
 
-// Assets - Components
 import { AddSquare, SearchIcon } from '@/assets';
 import { Manager, Table } from '@/components';
 import {
@@ -18,7 +17,6 @@ import {
    MoreDescription,
 } from '@/components/Columns';
 import SelectCustome from '@/components/Select/Select';
-import { optionState } from '@/helpers/options';
 
 // const DropdownIndicator = (props: DropdownIndicatorProps) => {
 //    return (
@@ -29,18 +27,17 @@ import { optionState } from '@/helpers/options';
 // };
 
 const Device = () => {
-   const optionConnect = [
-      { type: 'all', label: 'Tất cả' },
-      { type: 'connect', label: 'Kết nối' },
-      { type: 'in-connect', label: 'Mất kết nối' },
-   ];
    const [selected, setSelected] = useState('all');
    const [connected, setConnected] = useState('all');
    const [globalFilter, setGlobalFilter] = useState('');
+   const [isLoading, setIsLoading] = useState(false);
    const dispatch = useAppDispatch();
    let { devices } = useAppSelector((state: RootState) => state.device);
    useEffect(() => {
-      dispatch(getDevices());
+      setIsLoading(true);
+      dispatch(getDevices()).then(() => {
+         setIsLoading(false);
+      });
    }, [dispatch]);
 
    const columns = useMemo<ColumnDef<DeviceType>[]>(
@@ -163,6 +160,7 @@ const Device = () => {
                   columns={columns}
                   data={devices}
                   onGlobalFilterChange={setGlobalFilter}
+                  isLoading={isLoading}
                />
 
                <Manager

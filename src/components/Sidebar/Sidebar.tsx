@@ -18,6 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
    const navigate = useNavigate();
 
    const handleLogout = () => {
+      localStorage.removeItem('isAuthenticated');
       setIsLoading(true);
       dispatch(logout()).then(() => {
          setIsLoading(false);
@@ -36,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
                {routes.map(({ label, icon, path, more, children }, idx) =>
                   path ? (
                      <NavLink
-                        key={`${label}${idx}`}
+                        key={`${label}${idx}2`}
                         className={({ isActive }) =>
                            isActive ? onActive : noActive
                         }
@@ -69,44 +70,38 @@ const Sidebar: React.FC<SidebarProps> = ({ routes }) => {
                         )}
                      </NavLink>
                   ) : (
-                     <>
-                        <div
-                           key={`${label} + ${idx}`}
-                           className="group px-3 relative text-textGray hover:bg-[#FFF2E7] hover:cursor-pointer select-none"
-                        >
-                           <span className="group-hover:text-primaryColor flex items-center gap-2 py-3 font-semibold text-base leading-6">
-                              <img src={icon} alt="" />
-                              {label}
-                              <img src={more} alt="" />
-                           </span>
+                     <div
+                        key={`${label} + ${idx}`}
+                        className="group px-3 relative text-textGray hover:bg-[#FFF2E7] hover:cursor-pointer select-none"
+                     >
+                        <span className="group-hover:text-primaryColor flex items-center gap-2 py-3 font-semibold text-base leading-6">
+                           <img src={icon} alt="" />
+                           {label}
+                           <img src={more} alt="" />
+                        </span>
 
-                           {children && (
-                              <div className="w-[290px] z-10 group-hover:visible group-hover:opacity-100 invisible opacity-0 absolute top-0 left-full overflow-hidden rounded-e-lg bg-white shadow-md transition-all ease-in duration-200">
-                                 <nav>
-                                    <ul className="flex flex-col">
-                                       {children.map(
-                                          ({ label, path }, index) => (
-                                             <NavLink
-                                                key={index + label + path}
-                                                className={({ isActive }) =>
-                                                   isActive
-                                                      ? onActive
-                                                      : noActive
-                                                }
-                                                to={path}
-                                             >
-                                                <span className="pl-1 py-3 block">
-                                                   {label}
-                                                </span>
-                                             </NavLink>
-                                          )
-                                       )}
-                                    </ul>
-                                 </nav>
-                              </div>
-                           )}
-                        </div>
-                     </>
+                        {children && (
+                           <div className="w-[290px] z-10 group-hover:visible group-hover:opacity-100 invisible opacity-0 absolute top-0 left-full overflow-hidden rounded-e-lg bg-white shadow-md transition-all ease-in duration-200">
+                              <nav>
+                                 <ul className="flex flex-col">
+                                    {children.map(({ label, path }, index) => (
+                                       <NavLink
+                                          key={index + label + path}
+                                          className={({ isActive }) =>
+                                             isActive ? onActive : noActive
+                                          }
+                                          to={path}
+                                       >
+                                          <span className="pl-1 py-3 block">
+                                             {label}
+                                          </span>
+                                       </NavLink>
+                                    ))}
+                                 </ul>
+                              </nav>
+                           </div>
+                        )}
+                     </div>
                   )
                )}
             </ul>

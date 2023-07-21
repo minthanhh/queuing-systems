@@ -11,3 +11,8 @@ export const optionCondition = [
     { type: 'rejected', label: 'Bỏ qua'},
 ]
  
+export const optionConnect = [
+    { type: 'all', label: 'Tất cả' },
+    { type: 'connect', label: 'Kết nối' },
+    { type: 'in-connect', label: 'Mất kết nối' },
+];

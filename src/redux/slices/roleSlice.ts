@@ -36,8 +36,6 @@ const RoleSlice = createSlice({
     extraReducers(builder) {
       builder.addCase(getRoles.fulfilled, (state, action) => {
         if (action.payload) {
-            console.log(action.payload)
-
             state.roles = action.payload
         }
       })

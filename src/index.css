@@ -39,3 +39,27 @@ body {
   image-rendering: crisp-edges;
 }
 
+.test {
+  background-image: linear-gradient(180deg, #CEDDFF 0%, #ceddff00 100%);
+}
+
+
+/* width */
+.scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Track */
+.scrollbar::-webkit-scrollbar-track {
+  background: white;
+}
+
+/* Handle */
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #ffc89b;
+  border-radius: 43px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+}

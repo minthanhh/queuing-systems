@@ -6,6 +6,9 @@ import serviceReducer from './slices/serviceSlice'
 import roleReducer from './slices/roleSlice'
 import accountReducer from './slices/accountSlice'
 import numberReducer from './slices/numberSlice'
+import userLogsReducer from './slices/userLogsSlice'
+import notifyReducer from './slices/notifySlice'
+import chartReducer from './slices/chartSlice'
 
 
 const rootReducer = combineReducers({
@@ -15,7 +18,10 @@ const rootReducer = combineReducers({
     service: serviceReducer,
     role: roleReducer,
     account: accountReducer,
-    number: numberReducer
+    number: numberReducer,
+    userLogs: userLogsReducer,
+    notify: notifyReducer,
+    chart: chartReducer
 })
 
 const store = configureStore({

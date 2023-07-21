@@ -9,6 +9,7 @@ interface SelectCustomeProps {
    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
    className?: string;
    name?: string;
+   defaultValue?: string;
 }
 
 const SelectCustome: React.FC<SelectCustomeProps> = ({
@@ -17,6 +18,7 @@ const SelectCustome: React.FC<SelectCustomeProps> = ({
    value,
    className,
    name,
+   defaultValue,
 }) => {
    const [rotateUp, setRotateUp] = useState(false);
    const hanldeIconRotate = () => {
@@ -34,6 +36,7 @@ const SelectCustome: React.FC<SelectCustomeProps> = ({
             className="appearance-none w-full bg-transparent py-[10px] px-3 outline-none"
             onClick={hanldeIconRotate}
             onChange={onChange}
+            defaultValue={defaultValue}
             value={value}
          >
             {options.map((opt, i) => (

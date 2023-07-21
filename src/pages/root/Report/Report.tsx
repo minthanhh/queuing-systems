@@ -1,57 +1,61 @@
 import { Column, ColumnDef, Table as TableType } from '@tanstack/react-table';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { useEffect, useMemo, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormControl, InputLabel, MenuItem } from '@mui/material';
+import { utils, writeFileXLSX } from 'xlsx';
 
 import { IReport } from '@/types';
-import { db } from '@/configs/firebase.config';
-import { ActionCondition, ActionTime } from '@/components/Columns';
+import { ActionCondition } from '@/components/Columns';
 import { Manager, Table } from '@/components';
 import { DownloadIcon, ArrowIcon } from '@/assets';
 import Skeleton from 'react-loading-skeleton';
-import { DateRangePicker } from '@mui/x-date-pickers-pro';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import { getPickFieldNumber } from '@/redux/slices/numberSlice';
+import { RootState } from '@/redux/store';
+import { SerializedError } from '@reduxjs/toolkit';
 
 const Report = () => {
    const [isLoading, setIsLoading] = useState(false);
-   const [reports, setReports] = useState<IReport[]>([]);
    const [globalFilter, setGlobalFilter] = useState('');
+   const dispatch = useAppDispatch();
+   const { reports } = useAppSelector((state: RootState) => state.number);
 
    useEffect(() => {
-      if (reports?.length === 0) {
-         setIsLoading(true);
-         getReports().then(() => {
+      setIsLoading(true);
+      dispatch(getPickFieldNumber())
+         .then(() => {
             setIsLoading(false);
-         });
-      }
+         })
+         .catch((err: SerializedError) => {});
+   }, [dispatch]);
+
+   // const handleJsonFileDownload = () => {
+   //    const reportsJson = reports;
+
+   //    // create file in browser
+   //    const fileName = 'reports.json'; //or fileName: reports
+   //    const data = new Blob([JSON.stringify(reportsJson)], {
+   //       type: 'text/json',
+   //    });
+   //    const jsonURL = window.URL.createObjectURL(data);
+
+   //    // create "a" HTLM element with href to file
+   //    const link = document.createElement('a') as HTMLAnchorElement;
+   //    document.body.appendChild(link);
+   //    link.href = jsonURL;
+   //    link.setAttribute('download', fileName); // or link.download = fileName + ".json";
+   //    link.click();
+   //    // clean up "a" element & remove ObjectURL
+   //    document.body.removeChild(link);
+   //    URL.revokeObjectURL(jsonURL);
+   // };
+
+   const handleDownload = useCallback(() => {
+      const ws = utils.json_to_sheet(reports);
+      const wb = utils.book_new();
+      utils.book_append_sheet(wb, ws, 'Data');
+      writeFileXLSX(wb, 'SheetReports.xlsx');
    }, [reports]);
-
-   const handleJsonFileDownload = () => {
-      const reportsJson = reports;
-
-      // create file in browser
-      const fileName = 'reports.json'; //or fileName: reports
-      const data = new Blob([JSON.stringify(reportsJson)], {
-         type: 'text/json',
-      });
-      const jsonURL = window.URL.createObjectURL(data);
-
-      // create "a" HTLM element with href to file
-      const link = document.createElement('a') as HTMLAnchorElement;
-      document.body.appendChild(link);
-      link.href = jsonURL;
-      link.setAttribute('download', fileName); // or link.download = fileName + ".json";
-      link.click();
-      // clean up "a" element & remove ObjectURL
-      document.body.removeChild(link);
-      URL.revokeObjectURL(jsonURL);
-   };
-
-   const getReports = async () => {
-      const snap = await getDocs(collection(db, 'reports'));
-      const reports = snap.docs.map((doc) => doc.data() as IReport);
-      setReports(reports);
-   };
 
    const columns = useMemo<ColumnDef<IReport>[]>(
       () => [
@@ -74,7 +78,6 @@ const Report = () => {
          {
             header: 'Thời gian cấp',
             accessorKey: 'grantTime',
-            cell: (cell) => ActionTime(cell),
          },
          {
             header: 'Tình trạng',
@@ -94,7 +97,6 @@ const Report = () => {
             <h3 className="font-semibold text-base leading-6 text-[#282739] mb-1">
                Chọn thời gian
             </h3>
-            <DateRangePicker sx={{ width: 320, height: 44 }} timezone="" />
          </div>
          <div className="flex items-start gap-6">
             <Table
@@ -115,7 +117,7 @@ const Report = () => {
                   label="Tải về"
                   type="download"
                   icon={DownloadIcon}
-                  onClick={handleJsonFileDownload}
+                  onClick={handleDownload}
                   path=""
                />
             )}

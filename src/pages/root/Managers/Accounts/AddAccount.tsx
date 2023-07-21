@@ -7,14 +7,17 @@ import { twMerge } from 'tailwind-merge';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { DropDown } from '@/assets';
-import { IAccount } from '@/types';
+import { IAccount, IUserLogs } from '@/types';
 import { Button, Heading, Input } from '@/components';
-import { useAppDispatch } from '@/hooks/storeHooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { addAccount } from '@/redux/slices/accountSlice';
 import { accountSchema } from '@/helpers/schema';
+import { RootState } from '@/redux/store';
+import { createUserLog } from '@/redux/slices/userLogsSlice';
 
 const AddAccount = () => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
+   const { profile } = useAppSelector((state: RootState) => state.user);
    const dispatch = useAppDispatch();
 
    const {
@@ -41,9 +44,15 @@ const AddAccount = () => {
 
       dispatch(addAccount(data as IAccount))
          .unwrap()
-         .then(() => {
+         .then(({ username }) => {
             toast.success('Đã thêm thành công tài khoản!');
             setIsLoading(false);
+            dispatch(
+               createUserLog({
+                  username: profile?.username,
+                  operations: `Thêm người dùng mới ${username}`,
+               } as IUserLogs)
+            );
             reset();
          })
          .catch((err: SerializedError) => {

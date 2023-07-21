@@ -36,7 +36,7 @@ const Table = <T,>(props: TableProps<T>) => {
    } = props;
    const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
       pageIndex: 0,
-      pageSize: 5 || Size,
+      pageSize: 6 || Size,
    });
 
    const pagination = useMemo(

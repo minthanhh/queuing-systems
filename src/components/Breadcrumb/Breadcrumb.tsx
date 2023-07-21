@@ -5,9 +5,15 @@ interface BreadcrumbProps {
    breadcrumb: string;
    path: string;
    label: string;
+   subLabel?: string;
 }
 
-const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb, label, path }) => {
+const Breadcrumb: React.FC<BreadcrumbProps> = ({
+   breadcrumb,
+   label,
+   path,
+   subLabel,
+}) => {
    return (
       <>
          <div className="flex items-center gap-2">
@@ -18,9 +24,21 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb, label, path }) => {
                {label}
             </Link>
             <img src={AngleRightIcon} alt="" />
-            <span className="text-xl font-bold leading-[30px] text-primaryColor">
-               {breadcrumb}
-            </span>
+            {subLabel ? (
+               <>
+                  <span className="text-xl font-bold leading-[30px]">
+                     {breadcrumb}
+                  </span>
+
+                  <span className="text-xl font-bold leading-[30px] text-primaryColor">
+                     {subLabel}
+                  </span>
+               </>
+            ) : (
+               <span className="text-xl font-bold leading-[30px] text-primaryColor">
+                  {breadcrumb}
+               </span>
+            )}
          </div>
       </>
    );

@@ -22,9 +22,10 @@ const Pagination: React.FC<PaginationProps> = ({
                .fill({})
                .map((_, idx) => (
                   <button
+                     key={idx}
                      onClick={() => setPageIndex(idx)}
                      className={twMerge(
-                        'w-[32px] h-[32px] font-bold text-base leading-5 py-[5px] px-[11px] rounded',
+                        'w-[32px] h-[32px] font-bold text-base leading-5 py-[5px] px-[11px] rounded flex items-center justify-center',
                         pageIndex === idx
                            ? 'bg-primaryColor text-white'
                            : 'bg-transparent text-[#7e7d88]'

@@ -5,12 +5,15 @@ import { Link } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 
 import { Button, Heading, Input } from '@/components';
-import { ServiceType } from '@/types';
-import { useAppDispatch } from '@/hooks/storeHooks';
+import { IUserLogs, ServiceType } from '@/types';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { addService } from '@/redux/slices/serviceSlice';
+import { createUserLog } from '@/redux/slices/userLogsSlice';
+import { RootState } from '@/redux/store';
 
 const AddService = () => {
    const [isLoading, setIsLoading] = useState(false);
+   const { profile } = useAppSelector((state: RootState) => state.user);
    const [{ prefix, surfix }, setPrefixOrSurfix] = useState({
       prefix: false,
       surfix: false,
@@ -40,12 +43,18 @@ const AddService = () => {
 
    const onSubmit: SubmitHandler<FieldValues> = (data) => {
       if (data) {
-         console.log(data);
          setIsLoading(true);
          dispatch(addService(data as ServiceType))
-            .then(() => {
+            .unwrap()
+            .then(({ name }) => {
                setIsLoading(false);
                toast.success('Dịch vụ đã được thêm thành công');
+               dispatch(
+                  createUserLog({
+                     username: profile?.username,
+                     operations: `Đã thêm dịch vụ ${name.toLowerCase()}`,
+                  } as IUserLogs)
+               );
             })
             .catch((err) => {
                toast.error(err);

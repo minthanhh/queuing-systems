@@ -40,3 +40,8 @@ export {default as DefaultAvatar} from './images/Avatar.png'
 export {default as ImageEmptyResult} from './images/empty.png'
 
 export {default as BackIcon} from './images/back-square.svg'
+export {default as NotifyWhite} from './images/notificationWhite.svg'
+
+export {default as DeviceColor} from './images/deviceColor.svg'
+export {default as ServiceColor} from './images/serviceColor.svg'
+export {default as GiveNumberColor} from './images/giveNumberColor.svg'

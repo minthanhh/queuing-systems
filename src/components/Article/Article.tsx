@@ -9,7 +9,7 @@ interface ArticleProps {
 
 const Article: React.FC<ArticleProps> = ({ icon, label, quantity, color }) => {
    return (
-      <article className="w-1/4 p-3 rounded-xl shadow-xl bg-white">
+      <article className="w-full p-3 rounded-xl shadow-md bg-white">
          <div className="flex items-center mb-3 gap-3">
             <div
                className={`flex items-center justify-center w-12 h-12 rounded-full ${color}`}

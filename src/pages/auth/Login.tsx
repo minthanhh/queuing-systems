@@ -60,9 +60,15 @@ const Login = () => {
                      password,
                   })
                );
+               const isAuthenticated = true;
+               localStorage.setItem(
+                  'isAuthenticated',
+                  JSON.stringify(isAuthenticated)
+               );
+
                setIsLoading(false);
                toast.success('Đăng nhập thành công');
-               navigate('/', { replace: true });
+               navigate('/', { replace: true, relative: 'route' });
             })
             .catch((err: SerializedError) => {
                toast.error(err.message);

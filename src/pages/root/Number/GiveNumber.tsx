@@ -15,9 +15,11 @@ import { Manager, Table, CustomSelect, Heading } from '@/components';
 import { AddSquare } from '@/assets';
 import { optionCondition } from '@/helpers/options';
 import Skeleton from 'react-loading-skeleton';
+import { useSearchParams } from 'react-router-dom';
 
 const GiveNumber = () => {
    const [isLoading, setIsLoading] = useState(false);
+   const [searchParams, setSearchParams] = useSearchParams();
    let [giveNumbers, setGiveLogs] = useState<IGiveNumber[]>([]);
    const [globalFilter, setGlobalFilter] = useState('');
    const [serviceNameList, setServiceNameList] = useState<Options[]>([]);
@@ -110,7 +112,13 @@ const GiveNumber = () => {
 
    const handleOnChangeSelected = (e: React.ChangeEvent<HTMLSelectElement>) => {
       const { name, value } = e.target;
-      setSelected((prev) => ({ ...prev, [name]: value }));
+      setSearchParams({
+         selected: value,
+      });
+      setSelected((prev) => ({
+         ...prev,
+         [name]: value || searchParams.get('selected'),
+      }));
    };
 
    if (selected.status === 'pending') {
@@ -130,6 +138,19 @@ const GiveNumber = () => {
          (item) => item.status === selected.status
       );
    }
+
+   if (searchParams.get('selected') === 'pending') {
+      giveNumbers = giveNumbers.filter((item) => item.status === 'pending');
+   }
+
+   if (searchParams.get('selected') === 'fulfilled') {
+      giveNumbers = giveNumbers.filter((item) => item.status === 'fulfilled');
+   }
+
+   if (searchParams.get('selected') === 'rejected') {
+      giveNumbers = giveNumbers.filter((item) => item.status === 'rejected');
+   }
+
    return (
       <div className="w-full">
          <Heading label="Quản lý cấp số" className="pl-6" />
@@ -145,6 +166,7 @@ const GiveNumber = () => {
                options={optionCondition}
                className="w-[150px]"
                name="status"
+               defaultValue={searchParams.get('selected') as string}
             />
          </div>
          <div className="flex gap-6">

@@ -1,76 +1,74 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import { collection, getCountFromServer, query, where } from "firebase/firestore"
-import { db } from "@/configs/firebase.config"
+import { getAllTotalCount, getTotalResults } from "@/helpers/promise"
 
 interface CountState {
-        device: {
-            total: number
-            totalActive: number
-            totalInActive: number
-        },
-        service: {
-            total: number
-            totalActive: number
-            totalInActive: number
-        },
-        numberLevel: {
-            total: number
-            totalActive: number
-            totalInActive: number
-        },
+    device: {
+        total: number
+        active: number
+        unactive: number
+    },
+    service: {
+        total: number
+        active: number
+        unactive: number
+    },
+    giveNumber: {
+        all: number,
+        pending: number,
+        rejected: number,
+        fulfilled: number
+    }
    
 }
 
 const initialState: CountState = {
-        device: {
-            total: 0,
-            totalActive: 0,
-            totalInActive: 0
-        },
-        service: {
-            total: 0,
-            totalActive: 0,
-            totalInActive: 0
-        },
-        numberLevel: {
-            total: 0,
-            totalActive: 0,
-            totalInActive: 0
-        },
-}
-
-const totalCounts = async (nameCollection: string) => {
-    const data = {
+    device: {
         total: 0,
-        totalActive: 0,
-        totalInActive: 0
-    }    
-    const collActive = collection(db, nameCollection)
-    const qActive = query(collActive, where('status', '==', 'active'))
-    const snActive = await getCountFromServer(qActive)
-    data.totalActive = snActive.data().count
-
-
-    const collInActive = collection(db, nameCollection)
-    const qInActive = query(collInActive, where('status', '==', 'in-active'))
-    const snInActive = await getCountFromServer(qInActive)
-    data.totalInActive = snInActive.data().count
-
-    const coll = collection(db, nameCollection)
-    const q = query(coll)
-    const sn = await getCountFromServer(q)
-    data.total = sn.data().count
-
-    return data
+        active: 0,
+        unactive: 0
+    },
+    service: {
+        total: 0,
+        active: 0,
+        unactive: 0
+    },
+    giveNumber: {
+        all: 0,
+        pending: 0,
+        rejected: 0,
+        fulfilled: 0
+    }
 }
 
 
-export const getTotalCounts = createAsyncThunk('device/totalCounts', async () => {
-    const device = await totalCounts('devices')
-    const service = await totalCounts('services')
-    const numberLevel = await totalCounts('numberLevels')
 
-    return { device, service, numberLevel}
+export const getAllResult = createAsyncThunk('number/getAllResult', async (_, thunk) => {
+    try {
+        const { 
+            resultAllGiveNumber,
+            resultSequenceIsWaiting,
+            resultSequenceNumberUsed, 
+            resultSquenceNumberOmitted  
+        } = await getTotalResults()
+
+        return { 
+            all: resultAllGiveNumber, 
+            pending: resultSequenceIsWaiting, 
+            rejected: resultSquenceNumberOmitted, 
+            fulfilled: resultSequenceNumberUsed 
+        }
+    } catch (err) {
+        thunk.rejectWithValue(err)
+    }
+})
+
+export const getTotalCounts = createAsyncThunk('/', async (_, thunk) => {
+    try {
+        const { device, service  } = await getAllTotalCount()
+        return { device, service} 
+    } catch (err) {
+        return thunk.rejectWithValue(err)
+    }
 })
 
 
@@ -80,15 +78,20 @@ const CountSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers(builder) {
-        builder.addCase(getTotalCounts.fulfilled, (state, action) => {
-            state.device = {...action.payload.device}
-            state.service = {...action.payload.service}
-            state.numberLevel = {...action.payload.numberLevel}
-        })
         
+        builder.addCase(getAllResult.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.giveNumber = action.payload
+            }
+        })
+
+        builder.addCase(getTotalCounts.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.device = action.payload.device
+                state.service = action.payload.service
+            }
+        })
     },
 })
 
-
-// export const {   } = DeviceSlice.actions
 export default CountSlice.reducer

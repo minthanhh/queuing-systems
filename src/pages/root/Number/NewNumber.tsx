@@ -11,7 +11,8 @@ import { Service, newNumber } from '@/redux/slices/numberSlice';
 import { getServices } from '@/redux/slices/serviceSlice';
 import { SerializedError } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import { IGiveNumber } from '@/types';
+import { IGiveNumber, INotify } from '@/types';
+import { createNotify } from '@/redux/slices/notifySlice';
 
 const NewNumber = () => {
    const [selected, setSelected] = useState('');
@@ -60,6 +61,13 @@ const NewNumber = () => {
                setIsOpen(true);
                toast.success('Bạn đã được cấp số vui lòng đợi.');
                setIsLoading(false);
+               dispatch(
+                  createNotify({
+                     uid: res?.uid,
+                     username: profile?.displayName,
+                     timeToReceive: res?.grantTime.replace('-', 'ngày'),
+                  } as INotify)
+               );
             })
             .catch((err: SerializedError) => {
                toast.error(err.message);

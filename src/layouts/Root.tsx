@@ -9,8 +9,6 @@ import {
    Service,
    Setting,
 } from '../assets';
-import { useAppSelector } from '@/hooks/storeHooks';
-import { RootState } from '@/redux/store';
 
 const Root = () => {
    const routes = [
@@ -25,6 +23,20 @@ const Root = () => {
          label: 'Thiết bị',
          breadcrumb: 'Danh sách thiết bị',
          path: '/devices',
+         routes: [
+            {
+               label: 'Cập nhật thiết bị',
+               path: '/devices/update-device',
+            },
+            {
+               label: 'Chi tiết thiết bị',
+               path: '/devices/detail-device',
+            },
+            {
+               label: 'Thêm thiết bị',
+               path: '/devices/add-device',
+            },
+         ],
       },
       {
          icon: Service,
@@ -66,7 +78,9 @@ const Root = () => {
       },
    ];
 
-   const { profile } = useAppSelector((state: RootState) => state.user);
+   const isAuthenticated = JSON.parse(
+      localStorage.getItem('isAuthenticated') as string
+   );
 
    const breadcrumbs = routes.map((route) => {
       if (route.children) {
@@ -77,6 +91,15 @@ const Root = () => {
             children: route.children,
          };
       }
+      if (route.routes) {
+         return {
+            breadcrumb: route.breadcrumb,
+            label: route.label,
+            path: route.path,
+            routes: route.routes,
+         };
+      }
+
       return {
          breadcrumb: route.breadcrumb,
          label: route.label,
@@ -84,11 +107,7 @@ const Root = () => {
       };
    });
 
-   if (!profile) {
-      return <Navigate to={'/login'} replace />;
-   }
-
-   return (
+   return isAuthenticated ? (
       <div className="w-full h-full flex">
          <Sidebar routes={routes} />
 
@@ -97,6 +116,8 @@ const Root = () => {
             <Outlet />
          </main>
       </div>
+   ) : (
+      <Navigate to={'/login'} replace />
    );
 };
 

@@ -94,6 +94,33 @@ export const ActionCondition = ({ row }: any) => {
    );
 };
 
+export const ActionUse = ({ row }: any) => {
+   const { status } = row.original;
+
+   return (
+      <>
+         <span
+            className={`w-2 h-2 mr-1 inline-block  rounded-full ${
+               status === 'pending'
+                  ? 'bg-[#4277ff]'
+                  : status === 'fulfilled'
+                  ? 'bg-[#7e7d88]'
+                  : status === 'rejected'
+                  ? 'bg-[#e73f3f]'
+                  : ''
+            }`}
+         ></span>
+         {status === 'pending'
+            ? 'Đang thực hiện'
+            : status === 'fulfilled'
+            ? 'Đã hoàn thành'
+            : status === 'rejected'
+            ? 'Vắng'
+            : ''}
+      </>
+   );
+};
+
 export const ActionTime = ({ row }: CellContext<any, unknown>) => {
    const { grantTime } = row.original;
 

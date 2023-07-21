@@ -1,39 +1,83 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useForm, FieldValues } from 'react-hook-form';
-import { DeviceType } from '@/types';
-import { Heading, Input } from '@/components';
+import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
+import { GetTheIDeviceKeys, IDevice, Options } from '@/types';
+import { Button, Heading, Input } from '@/components';
 import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { RootState } from '@/redux/store';
 import { getDevices } from '@/redux/slices/deviceSlice';
-import { CloseIcon } from '@/assets';
+import { Autocomplete, Stack, TextField } from '@mui/material';
 
 const UpdateDevice = () => {
    const { deviceId } = useParams();
-   const [device, setDevice] = useState<DeviceType>();
-   const { devices } = useAppSelector((state: RootState) => state.device);
    const dispatch = useAppDispatch();
+   const [device, setDevice] = useState<IDevice>();
+   const { devices } = useAppSelector((state: RootState) => state.device);
+   const [select, setSelect] = useState<Options[]>([]);
+   const [inputValue, setInputValue] = useState('');
+
+   const keysToRetrieve = useMemo<GetTheIDeviceKeys>(
+      () => [
+         'addressIP',
+         'connect',
+         'device',
+         'id',
+         'name',
+         'password',
+         'services',
+         'status',
+         'addressIP',
+         'username',
+      ],
+      []
+   );
+
+   const {
+      register,
+      setValue,
+      handleSubmit,
+      formState: { errors },
+   } = useForm<FieldValues>();
 
    useEffect(() => {
       if (deviceId && devices.length > 0) {
          const device = devices.filter((device) => device.uid === deviceId);
+         keysToRetrieve.forEach((field) => {
+            setValue(field, device[0][field]);
+         });
+
          setDevice(device[0]);
       } else {
          dispatch(getDevices());
       }
-   }, [deviceId, dispatch, devices]);
+   }, [deviceId, dispatch, devices, keysToRetrieve, setValue]);
 
-   const {
-      register,
-      formState: { errors },
-   } = useForm<FieldValues>({
-      defaultValues: devices,
-   });
+   const getOptions = useMemo(() => {
+      if (Array.isArray(device?.services)) {
+         return device?.services.map(
+            (service) =>
+               ({
+                  label: service,
+                  type: service,
+               } as Options)
+         );
+      }
+      return [];
+   }, [device?.services]);
 
-   if (device === undefined) {
-      <div> Loading ... </div>;
-   }
+   const onSubmit: SubmitHandler<FieldValues> = (data) => {
+      console.log(data);
+   };
+   const handleSelect = (e: any, value: Options[]) => {
+      setSelect([...value]);
+      setValue('services', [...value], {
+         shouldDirty: true,
+         shouldTouch: true,
+         shouldValidate: true,
+      });
+   };
 
+   console.log(inputValue);
    return (
       <div className="flex flex-col w-full px-6">
          <Heading label="Quản lý thiết bị" />
@@ -50,7 +94,6 @@ const UpdateDevice = () => {
                      id="id"
                      placeholder="Nhập mã thiết bị"
                      register={register}
-                     defaultValue={device?.id}
                      errors={errors}
                      required
                   />
@@ -63,7 +106,6 @@ const UpdateDevice = () => {
                      id="phone"
                      placeholder="Nhập tên thiết bị"
                      register={register}
-                     defaultValue={device?.name}
                      errors={errors}
                      required
                   />
@@ -73,7 +115,6 @@ const UpdateDevice = () => {
                      id="username"
                      placeholder="Nhập tài khoản"
                      register={register}
-                     defaultValue={device?.username}
                      errors={errors}
                      required
                   />
@@ -86,7 +127,6 @@ const UpdateDevice = () => {
                      id="addressIP"
                      placeholder="Nhập địa chỉ IP"
                      register={register}
-                     defaultValue={device?.addressIP}
                      errors={errors}
                      required
                   />
@@ -96,7 +136,6 @@ const UpdateDevice = () => {
                      id="password"
                      placeholder="Nhập mật khẩu"
                      register={register}
-                     defaultValue={device?.password}
                      errors={errors}
                      required
                   />
@@ -106,18 +145,30 @@ const UpdateDevice = () => {
                   <label htmlFor="services">Dịch vụ sử dụng:</label>
                   <div className="w-full rounded-lg">
                      <div className="flex items-center gap-[15px]">
-                        {Array.isArray(device?.services) &&
-                           device?.services.map((service) => (
-                              <div
-                                 key={service}
-                                 className="w-max px-3 py-[4.5px] flex items-center gap-[10px] bg-[#ffac6a] rounded-lg"
-                              >
-                                 <span className="text-white font-bold text-sm leading-[19px]">
-                                    {service}
-                                 </span>
-                                 <img src={CloseIcon} alt="" />
-                              </div>
-                           ))}
+                        <Stack sx={{ width: '100%', height: '80px' }}>
+                           <Autocomplete
+                              sx={{ width: '100%', height: '80px' }}
+                              multiple
+                              id="services"
+                              size="small"
+                              options={getOptions || []}
+                              getOptionLabel={(option) => option.label}
+                              {...register?.('services', { required: true })}
+                              value={select}
+                              onChange={handleSelect}
+                              inputValue={inputValue}
+                              onInputChange={(e, value) => {
+                                 setInputValue(value);
+                              }}
+                              renderInput={(params) => (
+                                 <TextField
+                                    sx={{ width: '100%', height: 'auto' }}
+                                    {...params}
+                                    placeholder="Chọn dịch vụ sử dụng"
+                                 />
+                              )}
+                           />
+                        </Stack>
                      </div>
                   </div>
                </div>
@@ -127,6 +178,10 @@ const UpdateDevice = () => {
                <sup className="text-red-500">*</sup> Là trường thông tin bắt
                buộc
             </p>
+         </div>
+
+         <div className="flex items-center">
+            <Button label="click" onClick={handleSubmit(onSubmit)} />
          </div>
       </div>
    );

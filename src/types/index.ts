@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore"
+
 export type User = {
     displayName: string | null
     email: string
@@ -7,6 +9,8 @@ export type User = {
 
 
 export type Route = {
+    activeIcon?: string
+    hoverIcon?: string
     path?: string
     label: string
     icon: string
@@ -126,33 +130,18 @@ export interface IUser {
     password?: string
 }
 
-export interface ICoupons {
-    uid?: string
-    fullName: string
-    email: string 
-    phone: string
-    serviceName: string
-    grantNumber: number
-    status: string
-    grantTime: string
-    expiryDate: string
-}
 
 
-export interface IReport {
-    orderNumber: string
-    serviceName: string 
-    grantTime: string
-    status: string
-    source: string
-}
+
+export interface IReport extends Omit<IGiveNumber, 'customerName' | 'expiryTime'> {}
 
 
 export interface IUserLogs {
-    impactTime: string
-    ipDone: string
+    impactTime?: Timestamp | string
+    ipDone?: string
     operations: string
     username: string
+    uid?: string
 }
 
 
@@ -197,9 +186,33 @@ export type IService = {
     uid?: string,
 }
 
+export interface IDevice {
+    id: string
+    name: string
+    device: string
+    username: string
+    addressIP: string
+    password: string
+    services: string | string[]
+    status: string
+    connect: string
+    uid?: string
+}
+
+export interface INotify {
+    username: string
+    uid?: string
+    timeToReceive: string
+    createdAt: Timestamp | string
+}
 
 
 export type CustomGetKeys<T, U extends string | number | symbol> = Array<keyof Omit<T, U>>
 
 export type GetTheIAccountKeys = CustomGetKeys<IAccount, 'uid' | 'createdAt' | 'updatedAt'>
+
 export type GetTheIServiceKeys = CustomGetKeys<IService, 'uid'>
+
+export type GetTheIDeviceKeys  = CustomGetKeys<IDevice, 'uid'>
+
+

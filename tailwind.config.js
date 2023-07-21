@@ -12,11 +12,14 @@ module.exports = {
       },
       colors: {
         primaryColor: '#FF7506',
-        textGray: '#7E7D88'
+        textGray: '#7E7D88',
+        secondary: '#535261',
+        notify: '#bf5805'
       },
       borderColor: {
         borderGray: '#D4D4D7',
-        primaryBorder: '#FF7506'
+        primaryBorder: '#FF7506',
+        borderBottom: '#e5e5e7'
       }
     },
   },

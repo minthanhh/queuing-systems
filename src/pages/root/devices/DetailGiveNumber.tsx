@@ -15,6 +15,8 @@ const DetailGiveNumber = () => {
       (state: RootState) => state.number
    );
 
+   console.log(giveNumberId);
+
    useEffect(() => {
       if (giveNumberId) {
          const getDataById = async () => {

@@ -15,6 +15,7 @@ interface InputProps {
    defaultValue?: string;
    className?: string;
    eyeToggle?: boolean;
+   disabled?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -28,6 +29,7 @@ const Input: React.FC<InputProps> = ({
    className,
    defaultValue,
    eyeToggle,
+   disabled,
 }) => {
    const [showHidePassword, setShowHidePassword] = useState(false);
 
@@ -42,9 +44,11 @@ const Input: React.FC<InputProps> = ({
             <sup className="text-red-500 ml-[5px]">*</sup>
          </label>
          <div
-            className={`rounded-lg border-2 shadow-md overflow-hidden transition-all ease-in-out duration-100 relative ${
-               errors[id] ? 'border-red-400' : 'border-borderGray'
-            }`}
+            className={twMerge(
+               'rounded-lg border-2 shadow-md overflow-hidden transition-all ease-in-out duration-100 relative',
+               errors[id] ? 'border-red-400' : 'border-borderGray',
+               disabled ? 'bg-[#eaeaec] border-[#eaeaec] text-[#9f9ea7]' : ''
+            )}
          >
             <input
                className="w-full outline-none border-none py-[10px] pl-3"
@@ -53,6 +57,7 @@ const Input: React.FC<InputProps> = ({
                placeholder={placeholder}
                {...register?.(id, { required })}
                defaultValue={defaultValue}
+               disabled={disabled}
             />
             {eyeToggle ? (
                showHidePassword ? (

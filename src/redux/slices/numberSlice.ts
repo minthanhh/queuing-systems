@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, setDoc, where } from "firebase/firestore"
 import { db } from "@/configs/firebase.config"
-import {  ServiceType, IGiveNumber, IOrderNumberAndState } from "@/types"
+import {  ServiceType, IGiveNumber, IOrderNumberAndState, IReport } from "@/types"
 import defaultExpiryDateAndTime from "@/helpers/date"
 
 
@@ -16,12 +16,14 @@ interface NumberState {
     listGiveNumbers: IGiveNumber[],
     error: string | null
     orderAndState: IOrderNumberAndState[]
+    reports: IReport[]
 }
 
 const initialState: NumberState = {
     listGiveNumbers: [],
     error: null,
-    orderAndState: []
+    orderAndState: [],
+    reports: []
 }
 
 type Counter = {
@@ -50,13 +52,14 @@ export const newNumber = createAsyncThunk('number/newNumber', async (service: Se
             expiryTime: defaultExpiryDateAndTime(18, 0),
             serviceId: service.serviceId,
             source: 'Hệ thống'
+
         }
 
         if (count <= Number(to)) {
             if (count !== Number(from)) {
                 const counting = prefix + count.toString().padStart(4, '0')
     
-                await addDoc(coll, {
+                const ref = await addDoc(coll, {
                     customerName: service.fullName || '',
                     email: service.email,
                     phone: service.phone || '',
@@ -73,11 +76,11 @@ export const newNumber = createAsyncThunk('number/newNumber', async (service: Se
                     count: count + 1
                 })
 
-                result = { ...result, orderNumber: counting} as IGiveNumber
+                result = { ...result, uid: ref.id, orderNumber: counting} as IGiveNumber
             } else {
                 const counting = prefix + Number(from).toString().padStart(4, '0')
 
-                await addDoc(coll, {
+                const ref = await addDoc(coll, {
                     customerName: service.fullName || '',
                     email: service.email,
                     phone: service.phone || '',
@@ -94,7 +97,7 @@ export const newNumber = createAsyncThunk('number/newNumber', async (service: Se
                     count: count + 1
                 })
 
-                result = { ...result, orderNumber: counting} as IGiveNumber
+                result = { ...result, uid: ref.id, orderNumber: counting} as IGiveNumber
             }
 
             return result as IGiveNumber
@@ -122,7 +125,6 @@ export const getGiveNumbers = createAsyncThunk('number/getGiveNumbers', async ()
     }
 })
 
-
 export const getOrderNumberAndState = createAsyncThunk('number/getOrderNumberAndState', async (serviceId : string) => {
     try {   
         console.log(serviceId)
@@ -141,6 +143,23 @@ export const getOrderNumberAndState = createAsyncThunk('number/getOrderNumberAnd
     }
 })
 
+export const getPickFieldNumber = createAsyncThunk('number/getPickFieldNumber', async () => {
+    try {
+        const coll = collection(db, 'give-numbers')
+        const sort = orderBy('orderNumber', 'asc')
+        const q = query(coll, sort)
+        const snapShot = await getDocs(q) 
+
+        const data = snapShot.docs.map((doc) => ({ uid: doc.id, ...doc.data() } as IReport))
+
+        return data
+    } catch (err) {
+        console.log(err)
+    }
+})
+
+
+
 const NumberSlice = createSlice({
     name: 'number',
     initialState,
@@ -155,6 +174,12 @@ const NumberSlice = createSlice({
         builder.addCase(getOrderNumberAndState.fulfilled, (state, action) => {
             if (action.payload) {
                 state.orderAndState = action.payload
+            }
+        })
+
+        builder.addCase(getPickFieldNumber.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.reports = action.payload
             }
         })
     }

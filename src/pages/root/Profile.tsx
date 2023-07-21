@@ -106,6 +106,7 @@ const Profile = () => {
                         id="fullName"
                         register={register}
                         errors={errors}
+                        disabled
                         required
                         defaultValue={profile?.displayName}
                      />
@@ -116,6 +117,7 @@ const Profile = () => {
                         register={register}
                         errors={errors}
                         required
+                        disabled
                         defaultValue={profile?.username}
                      />
                   </div>
@@ -128,6 +130,7 @@ const Profile = () => {
                         errors={errors}
                         required
                         defaultValue={profile?.phone}
+                        disabled
                      />
                      <Input
                         label="Mật khẩu"
@@ -135,6 +138,7 @@ const Profile = () => {
                         type="text"
                         register={register}
                         errors={errors}
+                        disabled
                         required
                         defaultValue={profile?.password}
                      />
@@ -148,6 +152,7 @@ const Profile = () => {
                         errors={errors}
                         required
                         defaultValue={profile?.email}
+                        disabled
                      />
                      <Input
                         label="Vai trò:"
@@ -157,6 +162,7 @@ const Profile = () => {
                         errors={errors}
                         required
                         defaultValue={profile?.role}
+                        disabled
                      />
                   </div>
                </div>

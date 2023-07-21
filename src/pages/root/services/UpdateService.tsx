@@ -1,17 +1,20 @@
 import { Link, useParams } from 'react-router-dom';
-import { Button, Heading, Input } from '@/components';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import { GetTheIServiceKeys, IService } from '@/types';
 import { useEffect, useState, useMemo } from 'react';
-import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
-import { RootState } from '@/redux/store';
-import { getServices, updateService } from '@/redux/slices/serviceSlice';
-import { toast } from 'react-toastify';
 import { SerializedError } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 import { twMerge } from 'tailwind-merge';
+
+import { RootState } from '@/redux/store';
+import { GetTheIServiceKeys, IService, IUserLogs } from '@/types';
+import { Button, Heading, Input } from '@/components';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
+import { getServices, updateService } from '@/redux/slices/serviceSlice';
+import { createUserLog } from '@/redux/slices/userLogsSlice';
 
 const UpdateService = () => {
    const { serviceId } = useParams();
+   const { profile } = useAppSelector((state: RootState) => state.user);
    const [isLoading, setIsLoading] = useState<boolean>(false);
    const [{ prefix, surfix }, setPrefixOrSurfix] = useState({
       prefix: false,
@@ -75,9 +78,15 @@ const UpdateService = () => {
       setIsLoading(true);
       dispatch(updateService({ ...data, uid: serviceId } as IService))
          .unwrap()
-         .then(() => {
+         .then(({ name }) => {
             toast.success('Cập nhật tài khoản thành công.');
             setIsLoading(false);
+            dispatch(
+               createUserLog({
+                  username: profile?.username,
+                  operations: `Cập nhật thông tin dịch vụ ${name.toLowerCase()}`,
+               } as IUserLogs)
+            );
          })
          .catch((err: SerializedError) => {
             toast.error(err.message);
@@ -300,7 +309,7 @@ const UpdateService = () => {
                <Button label="Hủy" outline />
             </Link>
             <Button
-               label="Thêm thiết bị"
+               label="Cập nhật"
                onSubmit={handleSubmit(onSubmit)}
                disabled={isLoading}
             />
