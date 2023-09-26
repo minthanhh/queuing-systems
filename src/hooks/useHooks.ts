@@ -90,5 +90,5 @@ import {
       selectedFile,
       stopDragEvent
     };
-  };
+};
   
