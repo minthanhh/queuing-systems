@@ -1,6 +1,5 @@
 export { default as ForgotPassword } from './Auth/ForgotPassword'
 export { default as ResetPassword } from './Auth/ResetPassword'
-
 export { default as Login } from './Auth/Login'
 
 // Root pages
