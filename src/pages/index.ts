@@ -1,4 +1,6 @@
-export * from './Auth'
+export { default as ForgotPassword } from './Auth/ForgotPassword'
+export { default as ResetPassword } from './Auth/ResetPassword'
+export { default as Login } from './Auth/Login'
 // Root pages
 export { default as Dashboard } from './Root/Dashboard'
 export { default as Report } from './Root/Report/Report'
