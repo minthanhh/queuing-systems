@@ -1,31 +1,29 @@
-import {
-    Dashboard,
-    Device,
-    AddDevice,
-    UpdateDevice,
-    DetailDevice,
-    Service,
-    AddService,
-    DetailService,
-    ForgotPassword,
-    Report,
-    Role,
-    UpdateService,
-    AddRole,
-    UpdateRole,
-    Account,
-    AddAccount,
-    UpdateAccount,
-    UserLogs,
-    NewNumber,
-    GiveNumber,
-    Profile,
-    ResetPassword,
-    DetailGiveNumber,
-} from '../pages'
+import Dashboard from '@/pages/Root/Dashboard'
 import { Auth, Protected, Root } from '../layouts'
 
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom'
+import Device from '@/pages/Root/Devices/Device'
+import AddDevice from '@/pages/Root/Devices/AddDevice'
+import DetailDevice from '@/pages/Root/Devices/DetailDevice'
+import UpdateDevice from '@/pages/Root/Devices/UpdateDevice'
+import DetailGiveNumber from '@/pages/Root/Devices/DetailGiveNumber'
+import Service from '@/pages/Root/Services/Service'
+import AddService from '@/pages/Root/Services/AddService'
+import DetailService from '@/pages/Root/Services/DetailService'
+import UpdateService from '@/pages/Root/Services/UpdateService'
+import Report from '@/pages/Root/Report/Report'
+import ForgotPassword from '@/pages/Auth/ForgotPassword'
+import ResetPassword from '@/pages/Auth/ResetPassword'
+import Profile from '@/pages/Root/Profile'
+import NewNumber from '@/pages/Root/Number/NewNumber'
+import UserLogs from '@/pages/Root/UserLogs'
+import GiveNumber from '@/pages/Root/Number/GiveNumber'
+import UpdateAccount from '@/pages/Root/Managers/Accounts/UpdateAccount'
+import AddAccount from '@/pages/Root/Managers/Accounts/AddAccount'
+import Account from '@/pages/Root/Managers/Accounts/Account'
+import UpdateRole from '@/pages/Root/Managers/Roles/UpdateRole'
+import AddRole from '@/pages/Root/Managers/Roles/AddRole'
+import Role from '@/pages/Root/Managers/Roles/Role'
 
 const router = createBrowserRouter(
     createRoutesFromElements(
